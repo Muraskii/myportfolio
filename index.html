@@ -39,6 +39,23 @@
       } catch {}
     })();
   </script>
+<script>
+/* ===== Global particle theme (single source of truth) ===== */
+window.particleTheme = {
+  // Raise this to increase particles everywhere (HERO + sections)
+  countPer100k: 120,            // try 120 → 160 if you want denser
+
+  // Visuals (auto-switch with theme)
+  colorDark:  'rgba(155,231,242,0.45)',
+  colorLight: 'rgba(40,60,70,0.35)',
+  dotMin: 0.9,
+  dotMax: 2.0,
+  linkMaxDist: 140,             // same for HERO & sections
+  baseSpeed: 0.25,              // same feel across the page
+  gravityPull: 120,             // “mouse gravity” strength
+  swirl: 18                     // tangential swirl
+};
+</script>
 
   <style>
     /* THEME TOKENS */
@@ -405,6 +422,12 @@
     /* HERO */
     #hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
     #hero-content{position:relative;z-index:10}
+<div aria-hidden="true"
+     class="pointer-events-none absolute w-[min(80vw,900px)] h-[min(40vh,360px)] rounded-[48px]
+            -z-10 blur-2xl"
+     style="background: radial-gradient(60% 60% at 50% 50%, rgba(10,15,20,0.55), rgba(10,15,20,0.0) 70%);">
+</div>
+
 /* ==== Immersive persistent hero background ==== */
 #hero {
   position: relative;
@@ -443,7 +466,7 @@ section {
   z-index: 0; /* behind text inside the section; we'll place canvases behind content but above background */
   pointer-events: none;
   opacity: 0;
-  transition: opacity 600ms cubic-bezier(.2,.9,.3,1);
+  transition: opacity 900ms cubic-bezier(.2,.9,.3,1);
   will-change: opacity;
 }
 
@@ -624,6 +647,51 @@ section {
     [data-theme="light"] .text-gray-400{color:#666 !important}
     [data-theme="light"] .border-gray-700{border-color:rgba(0,0,0,.2) !important}
     [data-theme="light"] .bg-\[\#121212\]{background:#ffffff !important;color:#111 !important}
+/* ===== FIXED NAVIGATION VISIBILITY ===== */
+#main-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--nav-blur);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+/* ===== Transparent-over-hero → Solid-on-scroll ===== */
+#main-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  /* start transparent over the hero */
+  background: transparent;
+  border-bottom: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: background .35s ease, box-shadow .35s ease, border-color .35s ease, backdrop-filter .35s ease;
+}
+
+/* when we scroll past the hero, make it a glass bar */
+#main-nav.nav-solid {
+  background: var(--nav-blur);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.25);
+}
+
+/* optional: a soft gradient when solid */
+#main-nav.nav-solid::before {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
+  opacity: .25;
+}
+
+
   </style>
 </head>
 <body>
@@ -1013,6 +1081,81 @@ section {
 
   <script>
   document.addEventListener('DOMContentLoaded', () => {
+// Rebuild HERO particles with a new count
+function rebuildHeroParticles(newCount) {
+  // dispose old mesh/geometry/material safely
+  if (particleMesh) {
+    if (particleMesh.geometry) particleMesh.geometry.dispose();
+    // keep material to preserve color and settings
+    scene.remove(particleMesh);
+  }
+
+  // reallocate arrays
+  const positions = new Float32Array(newCount * 3);
+  const velocities = new Float32Array(newCount * 3);
+  const colorsArr = new Float32Array(newCount * 3);
+  const c = new THREE.Color();
+
+  for (let i = 0; i < newCount; i++) {
+    const i3 = i * 3;
+    positions[i3]     = (Math.random() - 0.5) * 400;
+    positions[i3 + 1] = (Math.random() - 0.5) * 400;
+    positions[i3 + 2] = (Math.random() - 0.5) * 400;
+    velocities[i3]     = (Math.random() - 0.5) * 0.05;
+    velocities[i3 + 1] = (Math.random() - 0.5) * 0.05;
+    velocities[i3 + 2] = (Math.random() - 0.5) * 0.05;
+    c.setHSL(0.52 + Math.random() * 0.18, 0.8, 0.55);
+    colorsArr[i3]     = c.r;
+    colorsArr[i3 + 1] = c.g;
+    colorsArr[i3 + 2] = c.b;
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('color',    new THREE.BufferAttribute(colorsArr, 3));
+
+  // reuse existing PointsMaterial if available, otherwise make one
+  const mat = (particleMesh && particleMesh.material) ||
+    new THREE.PointsMaterial({
+      size: 1.4,
+      vertexColors: true,
+      blending: THREE.AdditiveBlending,
+      transparent: true,
+      opacity: 0.85,
+      sizeAttenuation: true,
+      color: heroColorHex()
+    });
+
+  // reassign globals used elsewhere
+  particleMesh = new THREE.Points(geo, mat);
+  scene.add(particleMesh);
+
+  // also update any arrays you use in your animate() loop:
+  // (match your existing variable names)
+  particlePositions = positions;
+  particleVelocities = velocities;
+}
+
+// Example resize hook (guarded so we don't rebuild too often)
+let heroRebuildRAF = 0;
+window.addEventListener('resize', () => {
+  cancelAnimationFrame(heroRebuildRAF);
+  heroRebuildRAF = requestAnimationFrame(() => {
+    const next = heroParticleCountFromArea();
+    rebuildHeroParticles(next);
+  });
+});
+
+// ===== HERO Particle Helpers =====
+function heroParticleCountFromArea() {
+  const area = window.innerWidth * window.innerHeight;
+  return Math.max(600, Math.round((area / 100000) * window.particleTheme.countPer100k));
+}
+function heroColorHex() {
+  const dark = document.documentElement.dataset.theme === 'dark';
+  return dark ? 0x9be7f2 : 0x283c46; // matches section color tones
+}
+
     const sections = document.querySelectorAll('.animate-fade-in-up');
     const nav = document.getElementById('main-nav');
     const heroSection = document.getElementById('hero');
@@ -1511,13 +1654,23 @@ section {
       card.addEventListener('touchstart', () => { enter(); }, {passive:true});
       document.addEventListener('touchstart', (e) => { if (!card.contains(e.target)) leave(); }, {passive:true});
     });
+// ===== HERO Particle Theme Helpers =====
+function heroParticleCountFromArea() {
+  const area = window.innerWidth * window.innerHeight;
+  return Math.max(3000, Math.round((area / 100000) * window.particleTheme.countPer100k));
+}
+function heroColorHex() {
+  const dark = document.documentElement.dataset.theme === 'dark';
+  return dark ? 0x9be7f2 : 0x283c46; // same tone as section particles
+}
 
     /* ===== Three.js hero ===== */
     let scene, camera, renderer, textMesh, particleMesh, lineMesh;
     const mouse = new THREE.Vector2();
     let lastMouseX=0,lastMouseY=0,lastMoveTime=Date.now();
     let mouseVelocity = new THREE.Vector3();
-    const particleCount = 1700;
+    const particleCount = heroParticleCountFromArea();
+
     const particlePositions = new Float32Array(particleCount*3);
     const particleVelocities = new Float32Array(particleCount*3);
     
@@ -1525,10 +1678,13 @@ section {
 // ===== Scroll impulse / inertia =====
 let scrollForce = 0;          // signed impulse; >0 = inward, <0 = outward
 let lastScrollY = window.scrollY || 0;
-const SCROLL_IMPULSE_FACTOR = 0.0025; // adjust intensity of per-pixel -> force
-const SCROLL_WHEEL_FACTOR   = 0.0035; // wheel delta multiplier (for wheel events)
-const SCROLL_DECAY = 0.9;           // how fast impulse decays (0.9..0.98 typical)
-const SCROLL_FORCE_CLAMP = 3.0;      // clamp to avoid explosions
+const SCROLL_IMPULSE_FACTOR = 0.003; // adjust intensity of per-pixel -> force
+const SCROLL_WHEEL_FACTOR   = 0.004; // wheel delta multiplier (for wheel events)
+const SCROLL_DECAY = 0.8;           // how fast impulse decays (0.9..0.98 typical)
+const SCROLL_FORCE_CLAMP = 8.0;      // clamp to avoid explosions
+let verticalDrift = 0;             // signed: >0 means scrolling down
+const VDRIFT_DECAY = 0.90;         // 0.85–0.95
+const VDRIFT_STRENGTH = 0.12;      // per-frame position offset factor
 
     const init = () => {
       const container = document.getElementById('hero');
@@ -1536,13 +1692,15 @@ const SCROLL_FORCE_CLAMP = 3.0;      // clamp to avoid explosions
       scene = new THREE.Scene();
       scene.fog = new THREE.Fog(document.documentElement.dataset.theme === 'dark' ? 0x0f0f10 : 0xf7f7f9, 10, 200);
       camera = new THREE.PerspectiveCamera(75, container.clientWidth/container.clientHeight, .1, 1000);
-      camera.position.z = 100;
+      camera.position.z = 90;
       renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
       renderer.setSize(container.clientWidth, container.clientHeight);
       renderer.setPixelRatio(window.devicePixelRatio);
-      const amb = new THREE.AmbientLight(0xffffff,.85); scene.add(amb);
-      const p1 = new THREE.PointLight(0x61b7c2,1.4,150); p1.position.set(20,20,80); scene.add(p1);
-      const p2 = new THREE.PointLight(0xffffff,.8,150); p2.position.set(-20,-20,80); scene.add(p2);
+      // Softer, contrast-friendly lighting
+const amb = new THREE.AmbientLight(0xffffff, 0.35); scene.add(amb);
+const p1 = new THREE.PointLight(0x61b7c2, 1.6, 180); p1.position.set(24, 22, 70); scene.add(p1);
+const p2 = new THREE.PointLight(0xffffff, 1.2, 160); p2.position.set(-26, -18, 60); scene.add(p2);
+
 
       // Particles
       const geo = new THREE.BufferGeometry();
@@ -1554,29 +1712,67 @@ const SCROLL_FORCE_CLAMP = 3.0;      // clamp to avoid explosions
       }
       geo.setAttribute('position', new THREE.BufferAttribute(particlePositions,3));
       geo.setAttribute('color', new THREE.BufferAttribute(colors,3));
-      const mat = new THREE.PointsMaterial({ size:1.4, vertexColors:true, blending:THREE.AdditiveBlending, transparent:true, opacity:.85, sizeAttenuation:true });
+      const mat = new THREE.PointsMaterial({
+  size:1.4,
+  vertexColors:true,
+  blending:THREE.AdditiveBlending,
+  transparent:true,
+  opacity:.85,
+  sizeAttenuation:true,
+  color: heroColorHex()
+});
+
       particleMesh = new THREE.Points(geo,mat); scene.add(particleMesh);
 
       // Lines
       const lineGeo = new THREE.BufferGeometry();
-      const maxLineCount = particleCount*4; const linePositions = new Float32Array(maxLineCount*4*6);
-      const lineMat = new THREE.LineBasicMaterial({ color:0x61b7c2, blending:THREE.AdditiveBlending, transparent:true, opacity:.12 });
+      const maxLineCount = particleCount*6; const linePositions = new Float32Array(maxLineCount*4*6);
+     const lineMat = new THREE.LineBasicMaterial({ color:0x61b7c2, blending:THREE.AdditiveBlending, transparent:true, opacity:.06 });
+
       lineGeo.setAttribute('position', new THREE.BufferAttribute(linePositions,3).setUsage(THREE.DynamicDrawUsage));
       lineMesh = new THREE.LineSegments(lineGeo,lineMat); scene.add(lineMesh);
 
       // Text
       const loader = new THREE.FontLoader();
       loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font)=>{
-        const tg = new THREE.TextGeometry('VEDANT', { font, size:40, height:5, curveSegments:12, bevelEnabled:true, bevelThickness:2, bevelSize:1.5, bevelOffset:0, bevelSegments:5 });
-        tg.center();
-        const tm = new THREE.MeshStandardMaterial({ color:0x61b7c2, emissive:0x61b7c2, emissiveIntensity:.22, metalness:.8, roughness:.2 });
-        textMesh = new THREE.Mesh(tg, tm); scene.add(textMesh); animate();
+        const tg = new THREE.TextGeometry('VEDANT', {
+  font,
+  size: 40, height: 5, curveSegments: 15,
+  bevelEnabled: true, bevelThickness: 2.4, bevelSize: 1.6, bevelOffset: 0, bevelSegments: 6
+});
+tg.center();
+
+const tm = new THREE.MeshPhysicalMaterial({
+  color: 0x9be7f2,
+  emissive: 0x61b7c2,
+  emissiveIntensity: 0.5,
+  metalness: 1.0,
+  roughness: 0.4,
+  clearcoat: 1.0,
+  clearcoatRoughness: 0.8
+});
+
+textMesh = new THREE.Mesh(tg, tm);
+scene.add(textMesh);
+
+// Subtle additive "glow" shell (controlled, not hazy)
+const glowMat = new THREE.MeshBasicMaterial({
+  color: 0x9be7f2,
+  transparent: true,
+  opacity: 1.0,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false
+});
+
+ animate();
       });
       window.addEventListener('resize', onResize);
       window.addEventListener('mousemove', onMouseMove);
       window.addEventListener('scroll', onScrollHero);
       // wheel events (fast, direction-sensitive)
       window.addEventListener('wheel', (e) => {
+verticalDrift += Math.sign(e.deltaY) * 1.0;
+
   // e.deltaY > 0 means scrolling down
   const w = Math.sign(e.deltaY) * Math.min(200, Math.abs(e.deltaY));
   scrollForce += w * SCROLL_WHEEL_FACTOR;
@@ -1600,6 +1796,7 @@ const onScrollHero = () => {
   const y = window.scrollY;
   const max = document.body.scrollHeight - window.innerHeight;
   targetZoom = (max > 0) ? (y / max) : 0;
+verticalDrift += Math.sign(dy) * 0.6;
 
   // derive scroll delta and apply a small impulse (for non-wheel scrolls — keyboard, touch)
   const dy = y - lastScrollY;
@@ -1686,7 +1883,7 @@ if (typeof scrollForce === 'number' && Math.abs(scrollForce) > 0.001) {
       }
       particleMesh.geometry.attributes.position.needsUpdate = true;
 
-      let idx=0; const lp = lineMesh.geometry.attributes.position.array; const maxDist=45;
+      let idx=0; const lp = lineMesh.geometry.attributes.position.array; const maxDist=36;
       for(let i=0;i<particleCount;i++){
         for(let j=i+1;j<particleCount;j++){
           const dx = particlePositions[i*3]-particlePositions[j*3];
@@ -1715,8 +1912,492 @@ window.addEventListener('scroll', onScrollHero);
     themeToggle.setAttribute('aria-pressed', document.documentElement.dataset.theme === 'dark' ? 'true' : 'false');
   });
   </script>
+<script>
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('main-nav');
+  if (window.scrollY > 50) {
+    nav.classList.add('nav-scrolled');
+  } else {
+    nav.classList.remove('nav-scrolled');
+  }
+});
+</script>
+<script>
+(function(){
+  const nav  = document.getElementById('main-nav');
+  const hero = document.getElementById('hero');
+
+  if (!nav || !hero) return;
+
+  function updateNavAppearance(){
+    // distance from top of viewport to bottom of hero
+    const heroBottom = hero.getBoundingClientRect().bottom;
+
+    // if the bottom of the hero has gone above ~60px (nav height region), make nav solid
+    if (heroBottom <= 60) {
+      nav.classList.add('nav-solid');
+    } else {
+      nav.classList.remove('nav-solid');
+    }
+  }
+
+  // run on load, scroll, and resize
+  window.addEventListener('scroll', updateNavAppearance, { passive: true });
+  window.addEventListener('resize', updateNavAppearance);
+  window.addEventListener('load', updateNavAppearance);
+  updateNavAppearance();
+
+  // optional: if you have a theme toggle that switches light/dark,
+  // the glass effect will adapt automatically via CSS variables.
+})();
+</script>
+<script>
+(function () {
+  // -------- Settings you can tweak per section ----------
+const sectionsToEnhance = [
+  { sel: '#about',    count: 150, speed: 0.22, hoverPull: 55, parallax: 0.9},
+  { sel: '#projects', count: 150, speed: 0.23, hoverPull: 58, parallax: 0.06 },
+  { sel: '#skills',   count: 150, speed: 0.22, hoverPull: 55, parallax: 0.07 },
+  { sel: '#hobbies',  count: 150, speed: 0.21, hoverPull: 50, parallax: 0.09 },
+  { sel: '#resume',   count: 150, speed: 0.20, hoverPull: 48, parallax: 0.09 },
+  { sel: '#contact',  count: 150, speed: 0.22, hoverPull: 55, parallax: 0.07 },
+];
+
+  // Particle color adapts to theme; feel free to adjust
+  const getStroke = () => {
+    const dark = document.documentElement.dataset.theme === 'dark';
+    return dark ? 'rgba(155,231,242,0.45)' : 'rgba(40,60,70,0.35)';
+  };
+
+  function addParticlesToSection(section, opts) {
+let scrollDrift = 0;          // signed: >0 = downwards scroll
+const DRIFT_DECAY = 0.9;      // how quickly drift fades each frame (0.85–0.95 is good)
+const DRIFT_STRENGTH = 0.15;  // how strongly scroll affects particle motion
+
+    // 1) Build the overlay container + canvas (using your existing CSS)
+    const host = document.createElement('div');
+    host.className = 'section-particles';
+    const wrap = document.createElement('div');
+    wrap.className = 'section-particles-wrap';
+    const canvas = document.createElement('canvas');
+    canvas.className = 'section-particles-canvas';
+    wrap.appendChild(canvas);
+    host.appendChild(wrap);
+    section.style.position = section.style.position || 'relative';
+    section.prepend(host); // put behind section content
+
+    const ctx = canvas.getContext('2d', { alpha: true });
+    let W = 0, H = 0, raf = null, running = false;
+
+    const mouse = { x: 0, y: 0, has: false };
+    const particles = [];
+    const density = opts.count || 60;
+    const baseSpeed = opts.speed || 0.22;
+    const hoverPull = opts.hoverPull || 60;   // attraction strength
+    const parallax = opts.parallax || 0.06;   // gentle drift with mouse
+
+ function resize() {
+  const rect = section.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = Math.max(1, rect.width);
+  H = Math.max(1, rect.height);
+  canvas.width  = Math.floor(W * dpr);
+  canvas.height = Math.floor(H * dpr);
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  particles.length = 0;
+  for (let i = 0; i < density; i++) {
+    particles.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * baseSpeed,
+      vy: (Math.random() - 0.5) * baseSpeed,
+      r: 1 + Math.random() * 1.8
+    });
+  }
+}
+
+
+    function step() {
+      if (!running) return;
+      const stroke = getStroke();
+      ctx.clearRect(0, 0, W, H);
+
+      // parallax drift: particles slide slightly toward mouse position
+      const px = mouse.has ? (mouse.x - W / 2) * parallax : 0;
+      const py = mouse.has ? (mouse.y - H / 2) * parallax : 0;
+
+      // update
+      for (let p of particles) {
+        // attraction/repulsion toward pointer
+if (mouse.has) {
+  const dx = mouse.x - p.x;
+  const dy = mouse.y - p.y;
+  const d2 = dx*dx + dy*dy || 1;
+  const d  = Math.sqrt(d2);
+
+  // Inverse-square "gravity" toward the cursor, softly clamped
+  const g = Math.min((hoverPull * 120) / d2, 1.0); // stronger & capped
+
+  // Attraction
+  p.vx += (dx / d) * g * 0.06;
+  p.vy += (dy / d) * g * 0.06;
+
+  // Tiny tangential swirl for liveliness
+  const swirl = Math.min(0.12, 18 / d2);
+  p.vx += -dy / d * swirl;
+  p.vy +=  dx / d * swirl;
+}
+
+
+        p.x += p.vx + px * 0.003;
+        p.y += p.vy + py * 0.003;
+
+        // wrap around edges for continuity
+        if (p.x < -5) p.x = W + 5;
+        if (p.x > W + 5) p.x = -5;
+        if (p.y < -5) p.y = H + 5;
+        if (p.y > H + 5) p.y = -5;
+      }
+
+      // draw: dots + soft lines between nearby points
+      ctx.lineWidth = 1;
+      for (let i = 0; i < particles.length; i++) {
+        const a = particles[i];
+        // dot
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
+        ctx.fillStyle = stroke;
+        ctx.fill();
+
+        // connect to a few neighbors
+        for (let j = i + 1; j < i + 12 && j < particles.length; j++) {
+          const b = particles[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const d2 = dx*dx + dy*dy;
+          const maxDist = 90; // link distance
+          if (d2 < maxDist * maxDist) {
+            const alpha = 1 - Math.sqrt(d2) / maxDist;
+            ctx.strokeStyle = stroke.replace(/[\d.]+\)$/,'') + (alpha * 0.8).toFixed(3) + ')';
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      raf = requestAnimationFrame(step);
+    }
+
+    function start() {
+      if (running) return;
+      running = true;
+      // ensure correct size on start
+      resize();
+      step();
+      host.classList.add('visible'); // you already have fade-in CSS for this class
+    }
+
+    function stop() {
+      running = false;
+      if (raf) cancelAnimationFrame(raf);
+      raf = null;
+      host.classList.remove('visible');
+    }
+
+// Events — listen on the SECTION instead of the canvas
+const onMouseMove = (e) => {
+  const rect = section.getBoundingClientRect();
+  mouse.x = e.clientX - rect.left;
+  mouse.y = e.clientY - rect.top;
+  mouse.has = true;
+};
+const onMouseLeave = () => (mouse.has = false);
+
+section.addEventListener('mousemove', onMouseMove, { passive: true });
+// Scroll → update drift; down scroll => positive delta => drift up (we invert later)
+let lastScrollY_local = window.scrollY || 0;
+section.addEventListener('wheel', (e) => {
+  // e.deltaY > 0 (scroll down) => drift should move particles up
+  scrollDrift += Math.sign(e.deltaY) * 1.0;
+}, { passive: true });
+
+window.addEventListener('scroll', () => {
+  const y = window.scrollY || 0;
+  const dy = y - lastScrollY_local;
+  scrollDrift += Math.sign(dy) * 0.6;
+  lastScrollY_local = y;
+}, { passive: true });
+
+section.addEventListener('mouseleave', onMouseLeave);
+
+    window.addEventListener('resize', resize);
+
+    // Observe section visibility to save CPU
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    const t = entry.intersectionRatio;                   // 0 → 1
+    const eased = t * t * (3 - 2 * t);                   // smoothstep
+    host.style.opacity = (0.05 + 0.95 * eased).toFixed(3);
+
+    // Start animation when barely visible; stop when fully gone
+    if (t > 0.06 && !running) start();
+    if (t < 0.02 && running)  stop();
+  });
+}, { threshold: [0, 0.06, 0.15, 0.35, 0.65, 1] });
+io.observe(section);
+
+
+    // Also react to theme changes (if you toggle)
+    const onTheme = () => { /* redraw next frame uses new color automatically */ };
+    window.addEventListener('storage', onTheme); // in case theme is persisted elsewhere
+
+    // expose a tiny handle (not strictly needed)
+    return { start, stop, resize, destroy() {
+      stop();
+      io.disconnect();
+      window.removeEventListener('resize', resize);
+      canvas.removeEventListener('mousemove', onMouseMove);
+      canvas.removeEventListener('mouseleave', onMouseLeave);
+      host.remove();
+    }};
+  }
+
+  // Boot for all target sections that exist
+  sectionsToEnhance.forEach(cfg => {
+    const section = document.querySelector(cfg.sel);
+    if (section) addParticlesToSection(section, cfg);
+  });
+})();
+</script>
+<script>
+/* ===== Section Particles: unified look & “mouse gravity” ===== */
+(function () {
+  const sectionsToEnhance = [
+    { sel: '#about'    },
+    { sel: '#projects' },
+    { sel: '#skills'   },
+    { sel: '#hobbies'  },
+    { sel: '#resume'   },
+    { sel: '#contact'  },
+  ];
+
+  function getStroke() {
+    const dark = document.documentElement.dataset.theme === 'dark';
+    return dark ? window.particleTheme.colorDark : window.particleTheme.colorLight;
+  }
+
+  function addParticlesToSection(section) {
+    // 1) Overlay container + canvas (uses your existing CSS classes)
+    const host = document.createElement('div');
+    host.className = 'section-particles';
+    const wrap = document.createElement('div');
+    wrap.className = 'section-particles-wrap';
+    const canvas = document.createElement('canvas');
+    canvas.className = 'section-particles-canvas';
+    wrap.appendChild(canvas);
+    host.appendChild(wrap);
+    section.style.position = section.style.position || 'relative';
+    section.prepend(host);
+
+    const ctx = canvas.getContext('2d', { alpha: true });
+    let W = 0, H = 0, raf = null, running = false;
+
+    const mouse = { x: 0, y: 0, has: false };
+    const particles = [];
+
+    const linkMaxDist = window.particleTheme.linkMaxDist;
+    const baseSpeed   = window.particleTheme.baseSpeed;
+
+    function densityFromArea() {
+      const rect = section.getBoundingClientRect();
+      const area = Math.max(1, rect.width * rect.height);
+      return Math.max(20, Math.round((area / 100000) * window.particleTheme.countPer100k));
+    }
+
+    function resize() {
+      const rect = section.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = Math.max(1, rect.width);
+      H = Math.max(1, rect.height);
+      canvas.width  = Math.floor(W * dpr);
+      canvas.height = Math.floor(H * dpr);
+      canvas.style.width = W + 'px';
+      canvas.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const density = densityFromArea();
+      particles.length = 0;
+      for (let i = 0; i < density; i++) {
+        particles.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: (Math.random() - 0.5) * baseSpeed,
+          vy: (Math.random() - 0.5) * baseSpeed,
+          r: window.particleTheme.dotMin +
+             Math.random() * (window.particleTheme.dotMax - window.particleTheme.dotMin)
+        });
+      }
+    }
+
+    function step() {
+      if (!running) return;
+      const stroke = getStroke();
+      ctx.clearRect(0, 0, W, H);
+
+      // Update particles with “inverse-square gravity” + swirl
+      for (let p of particles) {
+        if (mouse.has) {
+          const dx = mouse.x - p.x;
+          const dy = mouse.y - p.y;
+          const d2 = dx*dx + dy*dy || 1;
+          const d  = Math.sqrt(d2);
+
+// Softer gravity (reduced gain + lower cap)
+const g = Math.min((hoverPull * 60) / d2, 0.45);
+// Attraction
+p.vx += (dx / d) * g * 0.045;
+p.vy += (dy / d) * g * 0.045;
+
+
+          const swirl = Math.min(0.12, window.particleTheme.swirl / d2);
+          p.vx += -dy / d * swirl;
+          p.vy +=  dx / d * swirl;
+        }
+
+        p.x += p.vx;
+        p.y += p.vy;
+// Apply scroll drift (invert to move opposite scroll direction)
+p.y -= scrollDrift * DRIFT_STRENGTH;
+
+// Decay drift each frame
+scrollDrift *= DRIFT_DECAY;
+p.x += p.vx + px * 0.003;
+p.y += p.vy + py * 0.003;
+
+        // wrap
+        if (p.x < -5) p.x = W + 5;
+        if (p.x > W + 5) p.x = -5;
+        if (p.y < -5) p.y = H + 5;
+        if (p.y > H + 5) p.y = -5;
+      }
+
+      // Draw dots + links
+      ctx.lineWidth = 1;
+      for (let i = 0; i < particles.length; i++) {
+        const a = particles[i];
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
+        ctx.fillStyle = stroke;
+        ctx.fill();
+
+        for (let j = i + 1; j < i + 12 && j < particles.length; j++) {
+          const b = particles[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const d2 = dx*dx + dy*dy;
+          if (d2 < linkMaxDist * linkMaxDist) {
+            const alpha = 1 - Math.sqrt(d2) / linkMaxDist;
+            ctx.strokeStyle = stroke.replace(/[\d.]+\)$/,'') + (alpha * 0.8).toFixed(3) + ')';
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      raf = requestAnimationFrame(step);
+    }
+
+    function start() {
+      if (running) return;
+      running = true;
+      resize();
+      step();
+      host.classList.add('visible'); // your CSS fades this in
+    }
+
+    function stop() {
+      running = false;
+      if (raf) cancelAnimationFrame(raf);
+      raf = null;
+      host.classList.remove('visible');
+    }
+
+    // Events — listen on SECTION (overlay is pointer-events:none)
+    function onMouseMove(e) {
+      const rect = section.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.has = true;
+    }
+    function onMouseLeave() { mouse.has = false; }
+
+    section.addEventListener('mousemove', onMouseMove, { passive: true });
+    section.addEventListener('mouseleave', onMouseLeave);
+    window.addEventListener('resize', resize);
+
+    // Pause when not on screen
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.15) start();
+        else stop();
+      });
+    }, { threshold: [0, 0.15, 0.5, 1] });
+    io.observe(section);
+
+    return { destroy() {
+      stop(); io.disconnect();
+      window.removeEventListener('resize', resize);
+      section.removeEventListener('mousemove', onMouseMove);
+      section.removeEventListener('mouseleave', onMouseLeave);
+      host.remove();
+    }};
+  }
+
+  sectionsToEnhance.forEach(cfg => {
+    const section = document.querySelector(cfg.sel);
+    if (section) addParticlesToSection(section);
+  });
+})();
+</script>
+<script>
+/* ===== Crossfade HERO particles with first section ===== */
+(function(){
+  const hero = document.getElementById('hero');
+  const heroCanvas = document.getElementById('hero-canvas'); // already fixed-position in your CSS
+  if (!hero || !heroCanvas) return;
+
+  function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+  function updateHandoff(){
+    const hb = hero.getBoundingClientRect().bottom;
+    const band = 160; // fade band size
+
+    const heroOpacity = clamp((hb - 0) / band, 0.2, 1);  // never fully hide
+    heroCanvas.style.opacity = heroOpacity.toFixed(3);
+
+    const firstSection = document.querySelector('#about .section-particles') ||
+                         document.querySelector('#projects .section-particles');
+    if (firstSection) {
+      const secOpacity = clamp(1 - heroOpacity, 0, 1);
+      firstSection.style.opacity = (0.15 + secOpacity * 0.85).toFixed(3);
+    }
+  }
+
+  window.addEventListener('scroll', updateHandoff, { passive: true });
+  window.addEventListener('resize', updateHandoff);
+  window.addEventListener('load', updateHandoff);
+  updateHandoff();
+})();
+</script>
+
 </body>
 </html>
-
 
 
