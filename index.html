@@ -9,7 +9,7 @@
   <!-- SEO & Social Meta Tags -->
   <meta property="og:title" content="Vedant | Portfolio" />
   <meta property="og:description" content="Building elegant ideas with clean engineering." />
-  <meta property="og:image" content="assets/images/vedant.jpg" />
+  <meta property="og:image" content="https://muraskii.github.io/myportfolio/assets/images/vedant.jpg" />
   <meta property="og:url" content="https://muraskii.github.io/myportfolio/" />
   <link rel="canonical" href="https://muraskii.github.io/myportfolio/">
   <meta name="twitter:card" content="summary_large_image" />
@@ -1669,8 +1669,8 @@ if (typeof scrollForce === 'number' && Math.abs(scrollForce) > 0.001) {
   }
 
   // Subtle page breathing for immersion
-  document.body.style.transform = `scale(${1 + currentZoom * 0.015}) translateY(${currentZoom * -10}px)`;
-  document.body.style.transformOrigin = 'center top';
+ // document.body.style.transform = `scale(${1 + currentZoom * 0.015}) translateY(${currentZoom * -10}px)`;
+  //document.body.style.transformOrigin = 'center top';
 
       const still = (Date.now()-lastMoveTime)>100; const mouse3D = new THREE.Vector3(mouse.x*100, mouse.y*100, 0);
       for(let i=0;i<particleCount;i++){
@@ -1717,5 +1717,6 @@ window.addEventListener('scroll', onScrollHero);
   </script>
 </body>
 </html>
+
 
 
