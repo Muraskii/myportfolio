@@ -9,8 +9,9 @@
   <!-- SEO & Social Meta Tags -->
   <meta property="og:title" content="Vedant | Portfolio" />
   <meta property="og:description" content="Building elegant ideas with clean engineering." />
-  <meta property="og:image" content="https://placehold.co/1200x630/E5E5E5/000000?text=Vedant+Portfolio" />
-  <meta property="og:url" content="https://your-portfolio-url.com" />
+  <meta property="og:image" content="assets/images/vedant.jpg" />
+  <meta property="og:url" content="https://muraskii.github.io/myportfolio/" />
+  <link rel="canonical" href="https://muraskii.github.io/myportfolio/">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Vedant | Portfolio" />
   <meta name="twitter:description" content="Building elegant ideas with clean engineering." />
@@ -27,7 +28,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
-
+  <script src="https://kit.fontawesome.com/a2b5f4f3a6.js" crossorigin="anonymous"></script>
   <!-- Set initial theme ASAP to avoid flash -->
   <script>
     (function () {
@@ -915,7 +916,7 @@ section {
     </p>
 
     <!-- Option A: open in a new tab -->
-    <a href="assets/Vedant_Vishwakarma_Resume.pdf"
+    <a href="assets/resume/Vedant_Vishwakarma_Resume.pdf"
        target="_blank" rel="noopener"
        class="cta-button py-3 px-8 rounded-2xl text-lg font-medium tracking-wide"
        aria-label="Open Résumé in a new tab">
@@ -934,34 +935,62 @@ section {
   </div>
 </section>
 
-      <!-- CONTACT -->
-      <section id="contact" class="container mx-auto py-24 animate-fade-in-up">
-        <h2 class="text-4xl md:text-5xl text-center mb-12">Get In Touch</h2>
-        <div class="max-w-3xl mx-auto p-8 rounded-2xl bg-card-bg shadow-lg">
-          <form id="contact-form" class="space-y-6">
-            <div>
-              <label for="name" class="block text-sm font-medium mb-1">Name</label>
-              <input type="text" id="name" name="name" class="w-full p-3 rounded-xl border border-gray-700 focus:outline-none focus:border-teal-300 transition-colors bg-[#121212] text-white" required />
-            </div>
-            <div>
-              <label for="email" class="block text-sm font-medium mb-1">Email</label>
-              <input type="email" id="email" name="email" class="w-full p-3 rounded-xl border border-gray-700 focus:outline-none focus:border-teal-300 transition-colors bg-[#121212] text-white" required />
-            </div>
-            <div>
-              <label for="message" class="block text-sm font-medium mb-1">Message</label>
-              <textarea id="message" name="message" rows="5" class="w-full p-3 rounded-xl border border-gray-700 focus:outline-none focus:border-teal-300 transition-colors bg-[#121212] text-white" required></textarea>
-            </div>
-            <button type="submit" class="cta-button w-full py-3 rounded-2xl text-lg font-medium tracking-wide">Send Message</button>
-          </form>
-          <div class="flex justify-center gap-6 mt-12">
-            <a href="#" aria-label="GitHub" class="text-xl hover:text-accent-color transition-colors">GitHub</a>
-            <a href="#" aria-label="LinkedIn" class="text-xl hover:text-accent-color transition-colors">LinkedIn</a>
-            <a href="mailto:hello@Vedant.com" aria-label="Email" class="text-xl hover:text-accent-color transition-colors">Email</a>
+          <!-- CONTACT -->
+    <section id="contact" class="container mx-auto py-24 animate-fade-in-up">
+      <h2 class="text-4xl md:text-5xl text-center mb-12 font-serif">Get In Touch</h2>
+    
+      <div class="max-w-3xl mx-auto p-8 rounded-2xl bg-card-bg shadow-lg">
+        <form id="contact-form" class="space-y-6">
+          <div>
+            <label for="name" class="block text-sm font-medium mb-1">Name</label>
+            <input type="text" id="name" name="name"
+                   class="w-full p-3 rounded-xl border border-gray-700 focus:outline-none focus:border-teal-300 transition-colors bg-[#121212] text-white"
+                   required />
           </div>
+          <div>
+            <label for="email" class="block text-sm font-medium mb-1">Email</label>
+            <input type="email" id="email" name="email"
+                   class="w-full p-3 rounded-xl border border-gray-700 focus:outline-none focus:border-teal-300 transition-colors bg-[#121212] text-white"
+                   required />
+          </div>
+          <div>
+            <label for="message" class="block text-sm font-medium mb-1">Message</label>
+            <textarea id="message" name="message" rows="5"
+                      class="w-full p-3 rounded-xl border border-gray-700 focus:outline-none focus:border-teal-300 transition-colors bg-[#121212] text-white"
+                      required></textarea>
+          </div>
+          <button type="submit"
+                  class="cta-button w-full py-3 rounded-2xl text-lg font-medium tracking-wide">
+            Send Message
+          </button>
+        </form>
+    
+        <!-- Social Links -->
+        <div class="flex justify-center gap-8 mt-12 text-lg font-medium text-gray-300">
+          <a href="https://github.com/Muraskii"
+             target="_blank" rel="noopener"
+             aria-label="GitHub"
+             class="hover:text-[var(--accent)] transition-colors duration-200">
+            <i class="fa-brands fa-github mr-1"></i> GitHub
+          </a>
+    
+          <a href="https://www.linkedin.com/in/vedant-vishwakarma-286470185/"
+             target="_blank" rel="noopener"
+             aria-label="LinkedIn"
+             class="hover:text-[var(--accent)] transition-colors duration-200">
+            <i class="fa-brands fa-linkedin mr-1"></i> LinkedIn
+          </a>
+    
+          <a href="mailto:vedantvish07@gmail.com"
+             aria-label="Email"
+             class="hover:text-[var(--accent)] transition-colors duration-200">
+            <i class="fa-solid fa-envelope mr-1"></i> Email
+          </a>
         </div>
-      </section>
-    </div>
-  </main>
+      </div>
+    </section>
+  </div>
+</main>
 
   <!-- FOOTER -->
   <footer class="py-12 bg-card-bg text-center text-sm" style="color:var(--muted)">
@@ -1688,4 +1717,5 @@ window.addEventListener('scroll', onScrollHero);
   </script>
 </body>
 </html>
+
 
