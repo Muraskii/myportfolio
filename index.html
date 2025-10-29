@@ -1,0 +1,4650 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vedant | Building elegant ideas with clean engineering.</title>
+  <meta name="description" content="Vedant's portfolio showcasing work in electronics and clean engineering. Explore projects, skills, and a highlighted case study." />
+
+  <!-- SEO & Social Meta Tags -->
+  <meta property="og:title" content="Vedant | Portfolio" />
+  <meta property="og:description" content="Building elegant ideas with clean engineering." />
+  <meta property="og:image" content="https://muraskii.github.io/myportfolio/assets/images/vedant.jpg" />
+  <meta property="og:url" content="https://muraskii.github.io/myportfolio/" />
+  <link rel="canonical" href="https://muraskii.github.io/myportfolio/">
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Vedant | Portfolio" />
+  <meta name="twitter:description" content="Building elegant ideas with clean engineering." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Georgia:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
+  <script src="https://kit.fontawesome.com/a2b5f4f3a6.js" crossorigin="anonymous"></script>
+  <!-- Set initial theme ASAP to avoid flash -->
+  <script>
+    (function () {
+      try {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = stored || (prefersDark ? 'dark' : 'light');
+      } catch {}
+    })();
+  </script>
+<script>
+/* ===== Global particle theme (single source of truth) ===== */
+window.particleTheme = {
+  // Raise this to increase particles everywhere (HERO + sections)
+  countPer100k: 120,            // try 120 → 160 if you want denser
+
+  // Visuals (auto-switch with theme)
+  colorDark:  'rgba(155,231,242,0.45)',
+  colorLight: 'rgba(40,60,70,0.35)',
+  dotMin: 0.9,
+  dotMax: 2.0,
+  linkMaxDist: 140,             // same for HERO & sections
+  baseSpeed: 0.25,              // same feel across the page
+  gravityPull: 120,             // “mouse gravity” strength
+  swirl: 18                     // tangential swirl
+};
+</script>
+
+  <style>
+    /* THEME TOKENS */
+    :root {
+      --accent: #61b7c2;
+      --sand: #d5c8b5;
+      --radius: 1rem;
+      --panel-bg: rgba(34,34,34,.9);
+      --bg: #0f0f10;
+      --text: #e0e0e0;
+      --muted: #b9c0c2;
+      --card: #1b1b1d;
+      --nav-blur: rgba(15,15,16,.7);
+      --border: rgba(97,183,194,.28);
+      --glass-top: rgba(255,255,255,.08);
+      --glass-bottom: rgba(255,255,255,.02);
+    }
+    [data-theme="light"] {
+      --panel-bg: rgba(255,255,255,.9);
+      --bg: #f7f7f9;
+      --text: #111213;
+      --muted: #4a4a4a;
+      --card: #ffffff;
+      --nav-blur: rgba(255,255,255,.78);
+      --border: rgba(0,0,0,.12);
+      --glass-top: rgba(255,255,255,.65);
+      --glass-bottom: rgba(255,255,255,.35);
+    }
+
+    html,body{height:100%}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;scroll-behavior:smooth}
+
+/* ===== Fancy About section styles ===== */
+#about { position: relative; overflow: visible; }
+
+/* ---- About grid layout: reserve a stable right column for portrait ---- */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr minmax(320px, 440px); /* left flexible, right portrait limited */
+  gap: 2.5rem;
+  align-items: start; /* align top edges so portrait doesn't center vertically */
+  position: relative;
+}
+/* make about container wider than Tailwind's max-w-4xl so two-column layout fits */
+#about > .max-w-4xl {
+  max-width: 1240px; /* gives enough room for left column + portrait column */
+}
+
+/* make sure the about grid reserves a stable portrait column on larger screens */
+#about .about-grid {
+  grid-template-columns: 1fr minmax(300px, 440px); /* left flexible, right portrait limited */
+  align-items: start;
+}
+
+/* portrait-column explicit rules (applies because you added the HTML class) */
+#about .portrait-column {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  position: relative;
+  z-index: 6;
+  padding-left: 1rem; /* small gap so portrait never touches the cards */
+}
+
+/* ensure the portrait orb is positioned relative to portrait-wrap (not the page).
+   This overrides older/duplicate portrait-orb rules you may have. */
+#about .portrait-wrap { width: 20rem; height: 20rem; min-width: 200px; min-height: 200px; }
+#about .portrait-orb {
+  right: auto;
+  left: 50%;
+  top: 50%;
+  transform: translate(-40%, -40%) scale(1);
+  width: 220%;
+  height: 220%;
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+}
+#about .fancy-cards { z-index: 12; position: relative; }
+#about .fancy-card  { z-index: 13; position: relative; }
+
+
+/* ensure portrait column content is pinned to the right and top */
+.about-grid > .portrait-column,
+.about-grid > div.flex {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  position: relative;
+  z-index: 6; /* portrait column above background, but below left content when needed */
+}
+
+/* portrait sizing - keep inside its column and not overflow the grid */
+.portrait-wrap {
+  position: relative;
+  width: 20rem;  /* slightly larger for desktop */
+  height: 20rem;
+  min-width: 200px;
+  min-height: 200px;
+  border-radius: 999px;
+  overflow: visible; /* allow orb to extend but stay relative to portrait */
+  z-index: 7;
+  transform: translateZ(0);
+  
+}
+
+/* inner ring / surface sits above orb */
+.portrait-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: 0 22px 48px rgba(0,0,0,.6), inset 0 2px 12px rgba(255,255,255,.02);
+  z-index: 8;
+  background: var(--card);
+}
+
+/* keep image crisp and covering */
+.portrait-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: translateZ(0);
+  z-index: 9;
+}
+
+/* halo / decorative orb: position relative to portrait-wrap (not page)
+   bigger but kept behind the portrait so it won't clip the left column */
+.portrait-orb {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-40%, -40%) scale(1);
+  width: 220%;
+  height: 220%;
+  border-radius: 999px;
+  z-index: 0; /* behind portrait-inner */
+  background:
+    radial-gradient(circle at 35% 30%, rgba(97,183,194,.08), transparent 25%),
+    radial-gradient(circle at 70% 70%, rgba(155,231,242,.04), transparent 30%);
+  filter: blur(18px);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.95;
+}
+
+/* small border/halo that sits just outside the portrait */
+.portrait-border {
+  position: absolute;
+  inset: -10px;
+  border-radius: 999px;
+  z-index: 9;
+  border: 6px solid rgba(97,183,194,.06);
+  box-shadow: 0 8px 36px rgba(97,183,194,.06);
+  pointer-events: none;
+}
+
+/* --- Fancy cards: move left column above orb, limit width so they never intrude --- */
+.fancy-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  z-index: 12;              /* above portrait orb */
+  position: relative;
+}
+
+/* desktop: three columns inside left column (keeps them compact) */
+@media (min-width: 640px) {
+  .fancy-cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+}
+
+/* card visual — ensure it sits above the orb even if the orb stretches */
+.fancy-card {
+  z-index: 13;              /* bring cards to front */
+  position: relative;
+  overflow: visible;
+}
+
+/* When layout stacks (mobile) ensure portrait goes under content (stack order) */
+@media (max-width: 1023px) {
+  .about-grid {
+    grid-template-columns: 1fr; /* stack columns vertically on smaller screens */
+  }
+  .about-grid > .portrait-column,
+  .about-grid > div.flex { justify-content: center; margin-top: 1.25rem; }
+  .portrait-wrap { margin: 0 auto; }
+  .portrait-orb { left: 50%; top: 50%; transform: translate(-50%,-50%) scale(.95); width: 260%; height: 260%; opacity: .8; }
+}
+
+
+/* heading underline */
+.about-heading { position: relative; display:inline-block; padding-bottom: .5rem; }
+.about-heading::after{
+  content:"";
+  height:4px;
+  width:120%;
+  background:linear-gradient(90deg,var(--accent), #9be7f2);
+  position:absolute;
+  left:-10%;
+  bottom:0;
+  border-radius:999px;
+  transform:scaleX(0);
+  transform-origin:left center;
+  transition:transform .7s cubic-bezier(.2,.9,.3,1);
+  opacity:.95;
+}
+/* Fancy-cards tilt + bevel visual tuning */
+.fancy-card.tilt-target {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform .18s cubic-bezier(.2,.9,.3,1), box-shadow .18s ease;
+  backface-visibility: hidden;
+  position: relative;
+  z-index: 6;
+}
+
+.fancy-card.tilt-target .fancy-icon {
+  transition: transform .18s cubic-bezier(.2,.9,.3,1);
+  transform-origin: center;
+}
+
+/* inner bevel highlight for cards */
+.fancy-card.tilt-target::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  pointer-events: none;
+  background: linear-gradient(120deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 40%, transparent 60%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity .18s ease, transform .18s ease;
+  z-index: 2;
+}
+
+/* rim accent when active */
+.fancy-card.tilt-target.tilt-active {
+  box-shadow: 0 18px 44px rgba(0,0,0,.48);
+}
+.fancy-card.tilt-target.tilt-active::after { opacity: 1; transform: translateZ(6px) scale(1.01); }
+
+/* subtle icon pop when card tilts */
+.fancy-card.tilt-target.tilt-active .fancy-icon { transform: translateZ(6px) scale(1.02); }
+
+/* keyboard-focus */
+.fancy-card:focus-within { outline: none; box-shadow: 0 12px 34px rgba(0,0,0,.4); }
+
+.about-heading.visible::after{ transform:scaleX(1); }
+
+/* portrait */
+.portrait-wrap{ position:relative; width:18rem; height:18rem; border-radius:999px; display:block; }
+.portrait-inner{
+  position:relative; width:100%; height:100%; border-radius:999px; overflow:hidden;
+  box-shadow: 0 18px 40px rgba(0,0,0,.55), inset 0 2px 12px rgba(255,255,255,.02);
+  transform:translateZ(0);
+}
+.portrait-inner img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+/* layered ring / glow */
+.portrait-ring {
+  pointer-events:none;
+  position:absolute; inset:-14px; border-radius:999px; z-index:1;
+  background: radial-gradient(60% 60% at 50% 35%, rgba(97,183,194,.12), transparent 30%),
+              radial-gradient(40% 40% at 60% 70%, rgba(155,231,242,.06), transparent 40%);
+  filter: blur(10px);
+  mix-blend-mode: screen;
+}
+
+/* halo ring using border */
+.portrait-border {
+  position:absolute; inset:-8px; border-radius:999px; z-index:2;
+  border:6px solid rgba(97,183,194,.08);
+  box-shadow: 0 6px 30px rgba(97,183,194,.06);
+  pointer-events:none;
+}
+
+/* floating decorative node behind portrait */
+.portrait-orb{
+  position:absolute; right:-6%; top:8%; width:46%; height:46%; z-index:0; border-radius:999px;
+  background: radial-gradient(circle at 35% 30%, rgba(97,183,194,.06), transparent 25%),
+              radial-gradient(circle at 70% 70%, rgba(155,231,242,.03), transparent 30%);
+  filter: blur(18px);
+  transform: translateZ(0) scale(.98);
+}
+
+/* fancy cards */
+.fancy-cards { display:grid; grid-template-columns:1fr; gap:1rem; margin-top:1.25rem; }
+@media(min-width:640px){ .fancy-cards { grid-template-columns: repeat(3,1fr); } }
+
+.fancy-card {
+  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+  border-radius:1rem;
+  padding:1.25rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45);
+  border:1px solid var(--border);
+  transition: transform .35s cubic-bezier(.2,.9,.3,1), box-shadow .35s ease;
+  display:flex; gap:1rem; align-items:center;
+  transform-origin:center;
+  overflow:hidden;
+}
+.fancy-card:hover{ transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+
+.fancy-icon {
+  min-width:56px; min-height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(180deg, rgba(97,183,194,.12), rgba(155,231,242,.04));
+  border: 1px solid rgba(97,183,194,.08);
+  font-size:20px;
+  color:var(--accent);
+  box-shadow: inset 0 1px 6px rgba(255,255,255,.02);
+}
+
+/* text */
+.fancy-card h5{ margin:0; font-size:1.05rem; font-weight:700; }
+.fancy-card p{ margin:0; color:var(--muted); font-size:.95rem; margin-top:.35rem; }
+
+/* subtle particles behind left column */
+.about-decor {
+  pointer-events:none;
+  position:absolute; left:2.5rem; top:4rem; width:220px; height:220px; z-index:0; opacity:.12;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(97,183,194,.12), transparent 10%),
+    radial-gradient(circle at 75% 70%, rgba(155,231,242,.08), transparent 12%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.02), transparent 20%);
+  filter: blur(10px);
+}
+
+/* entrance animations */
+.fancy-card, .portrait-wrap, .about-text { opacity:0; transform: translateY(16px) scale(.995); transition: all .7s cubic-bezier(.2,.9,.3,1); }
+.fancy-card.pop-in, .portrait-wrap.pop-in, .about-text.pop-in { opacity:1; transform: translateY(0) scale(1); }
+
+/* small info badge under paragraph */
+.about-badge{
+  display:inline-block;
+  margin-top:1rem;
+  padding:.5rem .75rem;
+  border-radius:999px;
+  font-size:.9rem;
+  background: linear-gradient(90deg, rgba(97,183,194,.08), rgba(155,231,242,.04));
+  border:1px solid rgba(97,183,194,.06);
+  color:var(--accent);
+}
+
+/* optional micro detail list */
+.about-list { margin-top:1rem; display:flex; gap:1rem; flex-wrap:wrap; color:var(--muted); }
+.about-list .dot { font-weight:600; color:var(--accent); margin-right:.35rem; }
+
+    /* Progress bar */
+    .scroll-progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),#9be7f2);z-index:60;transform-origin:left center;transform:scaleX(0)}
+
+    /* Modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);z-index:50;opacity:0;visibility:hidden;transition:opacity .3s ease,visibility 0s .3s}
+    .modal-backdrop.open{opacity:1;visibility:visible;transition:opacity .3s ease}
+    .modal-content{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.92);width:min(92vw,780px);padding:2.25rem;background:var(--panel-bg);border-radius:1.5rem;box-shadow:0 10px 30px rgba(0,0,0,.2);opacity:0;transition:transform .3s ease,opacity .3s ease}
+    .modal-backdrop.open .modal-content{transform:translate(-50%,-50%) scale(1);opacity:1}
+
+    h1,h2,h3,h4{font-family:Georgia,serif;font-weight:700}
+
+    /* HERO */
+    #hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+    #hero-content{position:relative;z-index:10}
+<div aria-hidden="true"
+     class="pointer-events-none absolute w-[min(80vw,900px)] h-[min(40vh,360px)] rounded-[48px]
+            -z-10 blur-2xl"
+     style="background: radial-gradient(60% 60% at 50% 50%, rgba(10,15,20,0.55), rgba(10,15,20,0.0) 70%);">
+</div>
+
+/* ==== Immersive persistent hero background ==== */
+#hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+/* Keep canvas fixed as a subtle background to entire page */
+#hero-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;  /* sits behind all content */
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* All main content floats above the WebGL background */
+main, section, footer {
+  position: relative;
+  z-index: 10;
+  background: transparent;
+}
+
+/* Give slight depth illusion to sections */
+section {
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  transition: transform 0.3s ease;
+}
+/* Section particle canvas overlays */
+.section-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 0; /* behind text inside the section; we'll place canvases behind content but above background */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 900ms cubic-bezier(.2,.9,.3,1);
+  will-change: opacity;
+}
+
+/* when a section is active (in view) we set a class on the canvas' host to fade it in */
+.section-particles.visible { opacity: 1; }
+
+/* To ensure canvases don't push layout: wrap them in a positioned container that sits inside the section */
+.section-particles-wrap { position: absolute; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+.section-particles-canvas { width: 100%; height: 100%; display: block; }
+
+
+    /* NAV + THEME TOGGLE */
+    .nav-scrolled{backdrop-filter:blur(8px);background:var(--nav-blur);box-shadow:0 10px 20px rgba(0,0,0,.06)}
+    .nav-link{position:relative;transition:color .2s ease,transform .2s ease}
+    .nav-link::after{content:'';position:absolute;left:0;right:0;bottom:-6px;height:2px;background:var(--accent);transform:scaleX(0);transition:transform .2s ease}
+    .nav-link:hover::after,.nav-link.active::after{transform:scaleX(1)}
+    .theme-toggle{display:flex;align-items:center;gap:.5rem;border:1px solid var(--border);background:var(--card);padding:.5rem .75rem;border-radius:9999px;transition:transform .15s ease,box-shadow .15s ease}
+    .theme-toggle:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(0,0,0,.15)}
+    .theme-toggle svg{width:18px;height:18px}
+    [data-theme="dark"] .icon-sun{display:inline}
+    [data-theme="dark"] .icon-moon{display:none}
+    [data-theme="light"] .icon-sun{display:none}
+    [data-theme="light"] .icon-moon{display:inline}
+
+    /* Buttons */
+    .cta-button{background:var(--accent);color:#0f0f10;box-shadow:0 6px 10px rgba(97,183,194,.2);transition:transform .2s ease,box-shadow .2s ease,background .2s ease}
+    .cta-button:hover{transform:translateY(-2px);box-shadow:0 12px 22px rgba(97,183,194,.28);background:#4aa6b1}
+
+    /* Cards */
+    .project-card,.portrait-card{background:var(--card);transition:transform .35s ease,box-shadow .35s ease, filter .35s ease;box-shadow:0 6px 12px rgba(0,0,0,.08)}
+    .project-card:hover,.portrait-card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 14px 28px rgba(0,0,0,.18)}
+
+    .animate-fade-in-up{opacity:0;transform:translateY(18px);transition:opacity .8s ease-out,transform .8s ease-out}
+    .animate-fade-in-up.is-visible{opacity:1;transform:translateY(0)}
+
+    .bg-card-bg{background:var(--card)}
+    .text-accent-color{color:var(--accent)}
+
+    /* Glass overlay */
+    .glass-card{position:relative;overflow:hidden;border-radius:var(--radius)}
+    .glass-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;gap:.5rem;padding:1rem;opacity:0;transform:translateY(6px) scale(.98);transition:opacity .25s ease,transform .25s ease}
+    .glass-overlay::before{content:"";position:absolute;inset:-20%;background:
+      radial-gradient(30% 30% at 20% 20%, rgba(97,183,194,.22), transparent 60%),
+      radial-gradient(28% 28% at 80% 30%, rgba(255,255,255,.06), transparent 70%),
+      radial-gradient(35% 35% at 30% 80%, rgba(97,183,194,.15), transparent 65%);
+      filter:blur(18px);animation:float-blobs 18s ease-in-out infinite alternate;z-index:0}
+    .glass-surface{position:absolute;inset:0;background:linear-gradient(180deg, var(--glass-top), var(--glass-bottom));
+      border:1px solid var(--border);box-shadow:inset 0 1px 12px rgba(255,255,255,.06),0 10px 24px rgba(0,0,0,.15);
+      backdrop-filter:blur(14px) saturate(145%);-webkit-backdrop-filter:blur(14px) saturate(145%);border-radius:inherit;z-index:1}
+    .glass-content{position:relative;z-index:2}
+    .project-card:hover .glass-overlay,.project-card:focus-within .glass-overlay{opacity:1;transform:translateY(0) scale(1)}
+
+    @keyframes float-blobs{0%{transform:translate3d(-10px,-6px,0) scale(1)}100%{transform:translate3d(10px,8px,0) scale(1.05)}}
+
+    /* Tilt */
+    .tilt{transform-style:preserve-3d;will-change:transform}
+    /* --- Tilt + bevel visuals for About + Portrait --- */
+
+/* make these elements GPU-friendly */
+.tilt-target { will-change: transform; transform-style: preserve-3d; }
+
+/* slightly stronger shadow when hovering to read depth */
+.tilt-target.hovering {
+  transition: transform .18s cubic-bezier(.2,.9,.3,1), box-shadow .18s ease;
+  box-shadow: 0 26px 60px rgba(0,0,0,.52);
+}
+
+/* portrait bevel: inner highlight + rim */
+.portrait-inner {
+  position: relative; /* needed for pseudo elements */
+  transition: transform .18s cubic-bezier(.2,.9,.3,1), box-shadow .18s ease;
+  /* small initial 3D lift */
+  transform-origin: center center;
+  backface-visibility: hidden;
+}
+
+/* bevel highlight layer */
+.portrait-inner::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(120deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 40%, transparent 60%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity .22s ease, transform .22s ease;
+  transform: translateZ(0);
+  z-index: 4;
+}
+
+/* faint rim that intensifies on hover */
+.portrait-inner::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
+  border: 1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  transition: opacity .18s ease, transform .18s ease;
+  opacity: 0.7;
+  z-index: 2;
+}
+
+/* when active/hovering: boost bevel + subtle spec */
+.portrait-inner.tilt-active::after { opacity: 1; transform: translateZ(8px) scale(1.01); }
+.portrait-inner.tilt-active::before { transform: translateZ(6px) scale(1.01); opacity: 1; }
+
+/* small highlight that moves with pointer (optional) */
+.portrait-highlight {
+  position: absolute;
+  pointer-events: none;
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 35%, transparent 60%);
+  transform: translate(-50%,-50%) translateZ(30px) scale(.9);
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity .18s ease, transform .18s ease;
+  z-index: 5;
+}
+
+/* When hovering portrait: show highlight */
+.portrait-wrap.hovering .portrait-highlight { opacity: 1; }
+
+/* Tilt for about area: slightly larger rotation allowed, very subtle depth */
+.about-tilt-surface {
+  transition: transform .18s cubic-bezier(.2,.9,.3,1), box-shadow .18s ease;
+  transform-origin: center center;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* keyboard focus accessible (simulate hover) */
+.portrait-wrap:focus-within .portrait-inner,
+.portrait-wrap:focus-within .portrait-wrap,
+.about-grid:focus-within .about-tilt-surface {
+  outline: none;
+  box-shadow: 0 18px 44px rgba(0,0,0,.45);
+}
+
+
+    /* Tag chip */
+    .tag-chip{background:var(--sand);color:#1a1a1a}
+
+    /* Skills */
+    .skills-grid{display:flex;flex-wrap:wrap;gap:.75rem}
+    .skill-chip{position:relative;isolation:isolate;cursor:pointer;border-radius:9999px;padding:.6rem 1rem;background:var(--card);border:1px solid var(--border);
+      box-shadow:inset 0 1px 10px rgba(255,255,255,.05),0 8px 20px rgba(0,0,0,.12);transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
+    .skill-chip:hover{transform:translateY(-2px)}
+    .skill-chip.glass::before{content:"";position:absolute;inset:-30%;background:
+      radial-gradient(30% 30% at 25% 30%, rgba(97,183,194,.22), transparent 60%),
+      radial-gradient(28% 28% at 70% 30%, rgba(255,255,255,.08), transparent 70%),
+      radial-gradient(35% 35% at 50% 80%, rgba(97,183,194,.12), transparent 65%);
+      filter:blur(16px);z-index:-1;animation:float-blobs 16s ease-in-out infinite alternate}
+    .skill-chip.glass{backdrop-filter:blur(12px) saturate(140%);-webkit-backdrop-filter:blur(12px) saturate(140%)}
+    .skill-chip.active{outline:2px solid rgba(97,183,194,.7);box-shadow:0 12px 26px rgba(97,183,194,.15)}
+    .skill-ripple{position:absolute;border-radius:9999px;transform:translate(-50%,-50%);pointer-events:none;background:rgba(97,183,194,.35);filter:blur(1px);animation:ripple .6s ease-out}
+    @keyframes ripple{from{width:0;height:0;opacity:.65}to{width:240px;height:240px;opacity:0}}
+    #skill-panel{position:relative;margin-top:1rem;border-radius:1rem;border:1px solid var(--border);
+      background:linear-gradient(180deg, var(--glass-top), var(--glass-bottom));
+      backdrop-filter:blur(14px) saturate(145%);-webkit-backdrop-filter:blur(14px) saturate(145%);
+      box-shadow:inset 0 1px 12px rgba(255,255,255,.06),0 10px 24px rgba(0,0,0,.12);padding:1rem;display:none}
+    #skill-panel.open{display:block}
+
+    /* Hobbies video-on-hover */
+    .hobby-card{position:relative;overflow:hidden;isolation:isolate;background:var(--card)}
+    .hobby-media{position:absolute;inset:0;pointer-events:none}
+    .hobby-video{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease}
+    .hobby-scrim{position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.55));opacity:0;transition:opacity .28s ease}
+    .hobby-card.hovering .hobby-video{opacity:.92}
+    .hobby-card.hovering .hobby-scrim{opacity:1}
+    .hobby-emoji{font-size:3rem;line-height:1;display:inline-flex;align-items:center;justify-content:center;width:4rem;height:4rem;margin:0 auto .75rem auto}
+
+    /* Light-mode tweaks for utility classes used */
+    [data-theme="light"] .text-gray-300{color:#444 !important}
+    [data-theme="light"] .text-gray-400{color:#666 !important}
+    [data-theme="light"] .border-gray-700{border-color:rgba(0,0,0,.2) !important}
+    [data-theme="light"] .bg-\[\#121212\]{background:#ffffff !important;color:#111 !important}
+/* ===== FIXED NAVIGATION VISIBILITY ===== */
+#main-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--nav-blur);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+/* ===== Transparent-over-hero → Solid-on-scroll ===== */
+#main-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  /* start transparent over the hero */
+  background: transparent;
+  border-bottom: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: background .35s ease, box-shadow .35s ease, border-color .35s ease, backdrop-filter .35s ease;
+}
+
+/* when we scroll past the hero, make it a glass bar */
+#main-nav.nav-solid {
+  background: var(--nav-blur);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.25);
+}
+
+/* optional: a soft gradient when solid */
+#main-nav.nav-solid::before {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
+  opacity: .25;
+}
+
+
+  
+/* ==== Bevel-Raise + Glow Hover Effects (added) ==== */
+.section-raise {
+  position: relative;
+  border-radius: var(--radius);
+  isolation: isolate;
+  transition: transform .25s cubic-bezier(.2,.9,.3,1), box-shadow .25s ease, filter .25s ease;
+}
+.section-raise::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: inherit;
+  background:
+    radial-gradient(40% 40% at 30% 20%, rgba(97,183,194,.14), transparent 60%),
+    radial-gradient(50% 50% at 70% 80%, rgba(155,231,242,.08), transparent 70%);
+  filter: blur(14px);
+  opacity: 0;
+  transition: opacity .25s ease, transform .25s ease;
+  z-index: -1;
+  pointer-events: none;
+}
+.section-raise:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 60px rgba(0,0,0,.35);
+}
+.section-raise:hover::before {
+  opacity: .85;
+  transform: scale(1.02);
+}
+
+/* Bevelled surface card (used for Get In Touch outer box) */
+.bevel-raise {
+  position: relative;
+  border-radius: 1.25rem;
+  background: linear-gradient(180deg, var(--glass-top), var(--glass-bottom));
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 0 1px 10px rgba(255,255,255,.06),
+    0 12px 28px rgba(0,0,0,.22);
+  transition: transform .24s cubic-bezier(.2,.9,.3,1), box-shadow .24s ease;
+  will-change: transform, box-shadow;
+}
+.bevel-raise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(120deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.02) 50%, transparent 70%);
+  mix-blend-mode: screen;
+  opacity: .0;
+  transition: opacity .24s ease, transform .24s ease;
+}
+.bevel-raise:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    inset 0 1px 12px rgba(255,255,255,.08),
+    0 22px 60px rgba(0,0,0,.45);
+}
+.bevel-raise:hover::after {
+  opacity: 1;
+  transform: translateZ(8px) scale(1.01);
+}
+
+/* Subtle glow + lift for interactive form fields */
+#contact input[type="text"],
+#contact input[type="email"],
+#contact textarea {
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+#contact input[type="text"]:hover,
+#contact input[type="email"]:hover,
+#contact textarea:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(0,0,0,.25);
+  border-color: rgba(97,183,194,.45);
+}
+
+  
+/* Gentle glow on hover for cards and hobbies */
+.project-card:hover,
+.hobby-card:hover {
+  filter: drop-shadow(0 18px 40px rgba(97,183,194,.12));
+}
+
+  
+/* ===== Side Navigator (added) ===== */
+:root {
+  --nav-bg: linear-gradient(180deg, rgba(120,200,210,.12), rgba(120,200,210,.04));
+  --nav-border: rgba(255,255,255,.12);
+  --nav-dot: rgba(120,200,210,.45);
+  --nav-active: rgba(120,200,210,.9);
+  --nav-shadow: 0 12px 40px rgba(0,0,0,.35);
+}
+
+.side-nav { position: fixed; left: clamp(16px, 2vw, 32px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+  padding: .6rem;
+  border-radius: 2rem;
+  backdrop-filter: blur(10px);
+  background: var(--nav-bg);
+  border: 1px solid var(--nav-border);
+  box-shadow: var(--nav-shadow);
+  isolation: isolate;
+}
+
+.side-nav .nav-item {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  position: relative;
+  border: 1px solid rgba(255,255,255,.08);
+  background: radial-gradient(60% 60% at 40% 30%, rgba(255,255,255,.08), rgba(255,255,255,.02));
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,.28);
+}
+.side-nav .nav-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0,0,0,.36);
+  border-color: rgba(120,200,210,.35);
+}
+.side-nav .nav-item .icon {
+  font-size: 1.05rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.3));
+  opacity: .85;
+  transition: opacity .2s ease;
+}
+.side-nav .nav-item.active {
+  background: radial-gradient(60% 60% at 50% 50%, var(--nav-active), rgba(120,200,210,.2));
+  border-color: rgba(120,200,210,.7);
+}
+.side-nav .nav-item.active .icon {
+  opacity: 1;
+}
+.side-nav .nav-item::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: 0 0 0 0 rgba(120,200,210,.6);
+  transition: box-shadow .35s ease;
+}
+.side-nav .nav-item.active::after {
+  box-shadow: 0 0 0 6px rgba(120,200,210,.15);
+}
+
+/* Spin on activate */
+@keyframes spinOnce {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.side-nav .nav-item.spin .icon {
+  animation: spinOnce .5s ease;
+}
+
+/* Hide on very small screens */
+@media (max-width: 640px) {
+  .side-nav { display: none; }
+}
+
+/* ===== Cursor-follow subtle glow (added) ===== */
+#cursor-glow {
+  position: fixed;
+  left: 0; top: 0;
+  width: 260px; height: 260px;
+  margin-left: -130px; /* center by translate via left/top */
+  margin-top: -130px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 40;
+  opacity: .0;
+  mix-blend-mode: screen;
+  background: radial-gradient(120px 120px at 50% 50%,
+              rgba(120,200,210,.28),
+              rgba(120,200,210,.10) 35%,
+              rgba(120,200,210,.02) 70%,
+              transparent 80%);
+  transition: opacity .25s ease;
+  will-change: transform, opacity;
+  filter: blur(1px);
+}
+body:hover #cursor-glow { opacity: .9; }
+
+  
+/* ===== Navigator enhancements: indicator + morph states ===== */
+.side-nav {
+  --tilt: 0deg;
+  --scale: 1;
+  --gap: .6rem;
+  --radius: 2rem;
+  gap: var(--gap);
+  border-radius: var(--radius);
+  transform: translateY(-50%) rotate(var(--tilt)) scale(var(--scale));
+  transition: transform .35s cubic-bezier(.2,.9,.3,1), border-radius .35s ease, gap .35s ease, background .6s ease;
+  position: fixed;
+  overflow: visible;
+}
+.side-nav::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border-radius: calc(var(--radius) + 12px);
+  background:
+    radial-gradient(50% 60% at 30% 20%, rgba(120,200,210,.22), transparent 60%),
+    radial-gradient(50% 60% at 70% 80%, rgba(120,200,210,.10), transparent 70%);
+  filter: blur(18px);
+  opacity: .35;
+  z-index: -1;
+  transition: opacity .4s ease;
+}
+.side-nav:hover::before { opacity: .6; }
+
+/* Morph directions */
+.side-nav.morph-down {
+  --tilt: 2.2deg;
+  --scale: 1.015;
+  --gap: .75rem;
+  --radius: 2.4rem;
+  background: linear-gradient(200deg, rgba(120,200,210,.16), rgba(120,200,210,.06));
+}
+.side-nav.morph-up {
+  --tilt: -2.2deg;
+  --scale: 1.015;
+  --gap: .75rem;
+  --radius: 2.4rem;
+  background: linear-gradient(20deg, rgba(120,200,210,.16), rgba(120,200,210,.06));
+}
+
+/* Moving indicator bar */
+.side-nav .indicator {
+  position: absolute;
+  left: -6px;
+  width: 3px;
+  height: 36px; /* will be resized in JS to match item */
+  background: linear-gradient(180deg, rgba(120,200,210,.9), rgba(120,200,210,.3));
+  border-radius: 4px;
+  box-shadow: 0 6px 16px rgba(120,200,210,.45);
+  transform: translateY(0);
+  transition: transform .35s cubic-bezier(.2,.9,.3,1), height .25s ease;
+  will-change: transform, height;
+  pointer-events: none;
+}
+
+/* Slight wobble on active spin */
+.side-nav .nav-item.spin .icon {
+  animation: spinOnce .55s ease, wobble .6s ease .55s;
+}
+@keyframes wobble {
+  0% { transform: rotate(0deg) }
+  25% { transform: rotate(10deg) }
+  50% { transform: rotate(-8deg) }
+  75% { transform: rotate(4deg) }
+  100% { transform: rotate(0deg) }
+}
+
+/* Subtle up/down arrows as hints */
+.side-nav::after{
+  content:"";
+  position:absolute;
+  right:-10px; top:6px; bottom:6px;
+  width: 6px;
+  border-radius:6px;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
+  opacity:.6;
+  pointer-events:none;
+}
+
+  
+/* ===== Live Scroll FX Canvas (Active Theory–inspired) ===== */
+#atfx-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Lift content above canvas */
+main, header, footer, section, nav.side-nav { position: relative; z-index: 1; }
+
+/* Subtle 3D tilt and parallax per section */
+.section-raise.fx-tilt {
+  transform-style: preserve-3d;
+  perspective: 1200px;
+  transition: transform .35s cubic-bezier(.2,.9,.3,1), box-shadow .25s ease, filter .25s ease;
+}
+.fx-tilt[data-tilt] {
+  transform: rotateX(var(--tiltX, 0deg)) rotateY(var(--tiltY, 0deg)) translateY(var(--liftY, 0));
+}
+.fx-parallax {
+  position: relative;
+  isolation: isolate;
+}
+.fx-parallax .layer {
+  position: absolute;
+  inset: -10%;
+  background: radial-gradient(60% 60% at 30% 20%, rgba(120,200,210,.06), transparent 60%);
+  opacity: .0;
+  transform: translateZ(0);
+  transition: opacity .4s ease;
+  z-index: -1;
+}
+.fx-parallax:hover .layer { opacity: .35; }
+
+/* Ensure hero has breathing room over background */
+#hero, #about { backdrop-filter: none; }
+
+  
+/* Stage 1: scene-driven accent variables (non-breaking defaults) */
+:root {
+  --accent-h: 190;
+  --accent-s: 65%;
+  --accent-l: 55%;
+}
+
+  
+/* === Injected: Nav morph + active highlighting + About hover override === */
+
+/* Nav morph states: subtle tilt/scale and compactness based on scroll direction */
+#main-nav {
+  transition: background .35s ease, box-shadow .35s ease, border-color .35s ease,
+              transform .35s cubic-bezier(.2,.9,.3,1), padding .25s ease, border-radius .35s ease;
+  will-change: transform, background, box-shadow, padding;
+}
+#main-nav.nav-morph-down {
+  transform: translateY(-4px) scale(0.995) rotateX(0.5deg);
+  border-radius: 0 0 18px 18px;
+}
+#main-nav.nav-morph-up {
+  transform: translateY(0) scale(1);
+  border-radius: 0;
+}
+/* Compact the bar after we leave hero */
+#main-nav.nav-solid { padding-top: .35rem; padding-bottom: .35rem; }
+
+/* Top nav link active state (paired with existing .nav-link styles) */
+#main-nav .nav-link.active {
+  color: var(--accent);
+  text-shadow: 0 0 18px rgba(97,183,194,.35);
+}
+
+/* Disable the outer Section hover "lift" ONLY for the About section container */
+#about.section-raise { transform: none !important; box-shadow: none !important; }
+#about.section-raise::before { opacity: 0 !important; }
+#about.section-raise:hover { transform: none !important; box-shadow: none !important; }
+
+/* === Injected: Make all top-level sections static on hover === */
+/* Neutralize any container-level hover lifts/animations */
+.section-raise,
+.section-raise:hover,
+section.section-raise,
+section.section-raise:hover,
+.section:hover,
+.section.is-hoverable:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+.section-raise::before,
+.section::before {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+/* Keep inner cards, tiles, and chips interactive as-is */
+
+/* === Injected: Skills universal hover box === */
+#skill-hover-box {
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -140%) scale(0.98);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: rgba(20, 25, 28, 0.9);
+  border: 1px solid rgba(120,200,210,0.35);
+  backdrop-filter: blur(6px);
+  padding: .55rem .7rem;
+  border-radius: .75rem;
+  font-size: .85rem;
+  line-height: 1.2;
+  box-shadow: 0 10px 28px rgba(0,0,0,.35);
+  transition: opacity .15s ease, transform .15s ease;
+  max-width: 280px;
+  color: var(--text, #d6e4ea);
+  white-space: nowrap;
+}
+#skill-hover-box.show {
+  opacity: 1;
+  transform: translate(-50%, -150%) scale(1);
+}
+/* Subtle emphasize for the hovered skill */
+#skills .is-skill-hovered {
+  outline: 1px dashed rgba(120,200,210,0.45);
+  outline-offset: 3px;
+  border-radius: .5rem;
+}
+
+/* === v9 Injected: Left-floating side nav + slingshot hooks === */
+.side-nav {
+  position: fixed !important;
+  left: clamp(16px, 2vw, 32px);
+  right: auto !important;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 9999 !important;
+  pointer-events: auto;
+  transform-style: preserve-3d;
+  will-change: transform, filter;
+  /* slingshot dynamic vars */
+  --bend: 0deg;
+  --skew: 0deg;
+  --floatY: 0px;
+  --floatX: 0px;
+  transform: translate(calc(var(--floatX)), calc(-50% + var(--floatY)))
+             perspective(1000px) rotateX(var(--bend)) skewY(var(--skew));
+}
+/* Pivot ends for slingshot */
+.side-nav.pull-top { transform-origin: 50% 0%; }
+.side-nav.pull-bottom { transform-origin: 50% 100%; }
+/* Make sure icons stay clickable and tilt a hair with bend */
+.side-nav .nav-item { transform-origin: 50% 50%; transition: transform .15s ease; }
+.side-nav.bending-down .nav-item { transform: rotateX(-3deg); }
+.side-nav.bending-up .nav-item { transform: rotateX(3deg); }
+
+/* === v9 Injected: Top nav speed-train trail (scroll-speed reactive) === */
+#main-nav {
+  --spd: 0;
+  --bendX: 0deg;
+  --blur: 0px;
+  --trail: 0;
+  transform: perspective(900px) skewX(var(--bendX)) translateZ(0);
+  filter: blur(var(--blur));
+  transition: transform .12s linear, filter .12s linear, background .25s ease, box-shadow .25s ease;
+}
+#main-nav::after {
+  content: "";
+  position: absolute;
+  inset: -10px -18px -12px -18px;
+  pointer-events: none;
+  background: radial-gradient(60% 100% at 50% 110%, rgba(120,200,210,.35), transparent 70%);
+  opacity: calc(var(--trail));
+  transform: translateX(calc(var(--spd) * 6px)) scaleX(calc(1 + abs(var(--spd)) * .35));
+  filter: blur(calc(2px + 8px * var(--trail)));
+  transition: opacity .1s linear, transform .1s linear, filter .1s linear;
+}
+
+/* === Injected v10: Stylized cinematic stretch nav effects === */
+
+/* LEFT NAV: fluid stretch instead of catapult */
+.side-nav {
+  position: fixed !important;
+  left: clamp(18px, 2vw, 32px);
+  top: 50%;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  z-index: 9999 !important;
+  pointer-events: auto;
+  will-change: transform;
+  --stretchX: 1;
+  --stretchY: 1;
+  --tiltY: 0deg;
+  --floatY: 0px;
+  transform: translateY(calc(-50% + var(--floatY)))
+             perspective(900px) rotateY(var(--tiltY))
+             scaleX(var(--stretchX)) scaleY(var(--stretchY));
+  transition: transform .25s cubic-bezier(.25,.9,.25,1);
+}
+/* Crisp look - no blur */
+.side-nav, .side-nav * { filter: none !important; }
+
+/* Keep icons responsive */
+.side-nav .nav-item { transition: transform .2s ease; }
+.side-nav.fast .nav-item { transform: scale(1.05); }
+.side-nav.idle .nav-item { transform: scale(1); }
+
+/* Slight floating glow retained */
+.side-nav::before {
+  content: "";
+  position: absolute;
+  inset: -15%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(120,200,210,.25), transparent 70%);
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* TOP NAV: speed-train cinematic stretch */
+#main-nav {
+  --spd: 0;
+  --stretchX: 1;
+  transform-origin: 50% 0;
+  transform: scaleX(var(--stretchX)) perspective(900px) translateZ(0);
+  transition: transform .12s linear, background .25s ease, box-shadow .25s ease;
+}
+#main-nav::after {
+  content: "";
+  position: absolute;
+  inset: -10px -18px -12px -18px;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(120,200,210,.25), transparent 70%);
+  opacity: 0;
+  transform: scaleX(1);
+  transition: opacity .15s linear, transform .15s linear;
+}
+#main-nav.fast::after {
+  opacity: .5;
+  transform: scaleX(1.3);
+}
+
+/* === Injected v11: Pure sideways stretch (no blur), scroll-speed reactive === */
+
+/* Ensure no blur anywhere on navs */
+#main-nav, #main-nav *,
+.side-nav, .side-nav * {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+
+/* TOP NAV: only horizontal stretch */
+#main-nav {
+  --stretchX: 1;
+  transform-origin: 50% 0%;
+  transform: scaleX(var(--stretchX));
+  transition: transform .14s linear, background .25s ease, box-shadow .25s ease;
+}
+
+/* Remove any previous trail visuals */
+#main-nav::after { display: none !important; }
+
+/* SIDE NAV: horizontal stretch + slight vertical compensation for realism */
+.side-nav {
+  --stretchX: 1;
+  --stretchY: 1;
+  --offsetY: 0px;
+  position: fixed !important;
+  left: clamp(18px, 2vw, 32px);
+  top: 50%;
+  transform: translateY(calc(-50% + var(--offsetY))) scaleX(var(--stretchX)) scaleY(var(--stretchY));
+  transform-origin: center center;
+  will-change: transform;
+  z-index: 9999 !important;
+  transition: transform .18s linear;
+}
+
+/* Optional gentle glow to keep separation from background (no glass panel) */
+.side-nav::before {
+  content: "";
+  position: absolute;
+  inset: -15%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(120,200,210,.18), transparent 70%);
+  opacity: .25;
+  pointer-events: none;
+}
+
+/* === Injected v12: Face-pull stretch with stylized tails (no blur) === */
+
+/* Common reset: no filter blur anywhere on navs */
+#main-nav, #main-nav *,
+.side-nav, .side-nav * { filter: none !important; -webkit-filter: none !important; }
+
+/* ---------------- TOP NAV (horizontal face-pull) ---------------- */
+#main-nav {
+  --stretchX: 1;
+  --tail: 0;            /* 0..1 intensity for tails */
+  --skew: 0deg;         /* tiny cinematic skew */
+  position: relative;
+  transform-origin: 50% 0%;
+  transform: perspective(900px) scaleX(var(--stretchX)) skewX(var(--skew));
+  transition: transform .12s linear, background .25s ease, box-shadow .25s ease;
+}
+/* Left tail */
+#main-nav::before,
+#main-nav::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  bottom: -6px;
+  width: calc(32px + 92px * var(--tail)); /* grows with speed */
+  pointer-events: none;
+  opacity: calc(.12 + .48 * var(--tail));
+  filter: none;
+  transition: opacity .12s linear, width .12s linear, transform .12s linear;
+  background: radial-gradient(100% 60% at 100% 50%, rgba(120,200,210,.65), rgba(120,200,210,.18) 55%, transparent 75%);
+}
+#main-nav::before {
+  left: 0;
+  transform: translateX(calc(-90% * var(--tail)));
+  /* gradient faces outward on the left */
+  background: radial-gradient(100% 60% at 0% 50%, rgba(120,200,210,.65), rgba(120,200,210,.18) 55%, transparent 75%);
+}
+#main-nav::after {
+  right: 0;
+  transform: translateX(calc(90% * var(--tail)));
+  background: radial-gradient(100% 60% at 100% 50%, rgba(120,200,210,.65), rgba(120,200,210,.18) 55%, transparent 75%);
+}
+
+/* ---------------- SIDE NAV (vertical bar with left/right face-pull) ---------------- */
+.side-nav {
+  --stretchX: 1;
+  --stretchY: 1;
+  --offsetY: 0px;
+  --tail: 0;            /* 0..1 intensity for tails */
+  --skewY: 0deg;
+  position: fixed !important;
+  left: clamp(18px, 2vw, 32px);
+  top: 50%;
+  transform-origin: 50% 50%;
+  transform: translateY(calc(-50% + var(--offsetY)))
+             perspective(900px) scaleX(var(--stretchX)) scaleY(var(--stretchY)) skewY(var(--skewY));
+  will-change: transform;
+  z-index: 9999 !important;
+  transition: transform .14s linear;
+}
+
+/* Visible stylized left/right tails on the vertical bar */
+.side-nav::before,
+.side-nav::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  bottom: -6px;
+  width: calc(22px + 68px * var(--tail));
+  pointer-events: none;
+  opacity: calc(.10 + .45 * var(--tail));
+  transition: opacity .12s linear, width .12s linear, transform .12s linear;
+  filter: none;
+}
+/* Left outward glow */
+.side-nav::before {
+  left: 0;
+  transform: translateX(calc(-85% * var(--tail)));
+  background: radial-gradient(100% 60% at 0% 50%, rgba(120,200,210,.6), rgba(120,200,210,.18) 55%, transparent 75%);
+}
+/* Right outward glow */
+.side-nav::after {
+  right: 0;
+  transform: translateX(calc(85% * var(--tail)));
+  background: radial-gradient(100% 60% at 100% 50%, rgba(120,200,210,.6), rgba(120,200,210,.18) 55%, transparent 75%);
+}
+
+/* Keep items responsive during stretch */
+.side-nav .nav-item { transition: transform .12s linear; }
+.side-nav.fast .nav-item { transform: scale(1.04); }
+
+/* === Injected v13: About hover fix + reactive typography system === */
+
+/* 1) ABOUT: remove hover outline but keep bevel/shadow */
+#about *:hover { outline: none !important; }
+#about .about-raise,
+#about .about-raise:hover {
+  /* keep bevel-y shadow while disabling outlines */
+  box-shadow: 0 10px 24px rgba(0,0,0,.28), 0 0 0 1px rgba(120,200,210,.25) inset;
+  outline: none !important;
+}
+/* If skills hover adds dashed outline, confine it to Skills section only */
+#skills .is-skill-hovered { outline: 1px dashed rgba(120,200,210,0.45); }
+#about .is-skill-hovered { outline: none !important; }
+
+/* 2) Reactive text: face-pull stretch mapped to scroll speed (no blur) */
+:root {
+  --txX: 1;          /* horizontal scale */
+  --txY: 1;          /* vertical scale */
+  --txLS: 0px;       /* letter spacing */
+  --txGlow: 0;       /* 0..1 for glow strength */
+}
+
+/* Apply to common text elements */
+h1, h2, h3, h4, h5, h6,
+p, li, a, blockquote, figcaption, small, .chip, .badge, .tag {
+  transform-origin: 50% 50%;
+  transform: scaleX(var(--txX)) scaleY(var(--txY));
+  transition: transform .14s linear, letter-spacing .14s linear, text-shadow .14s linear, color .2s ease;
+  letter-spacing: var(--txLS);
+}
+
+/* Subtle glow that scales with speed variable */
+h1, h2, h3, h4, h5, h6, p, li {
+  text-shadow: 0 0 calc(6px * var(--txGlow)) rgba(120,200,210, .25);
+}
+
+/* 3) Typography refresh: gradient headings + refined link underline */
+h1, h2, h3 {
+  background: linear-gradient(180deg, #e9f5f8, #9ad1da 60%, #70bfc9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+/* Keep smaller headings readable without full gradient */
+h4, h5, h6 { color: #dfeff3; }
+
+/* Links: smooth underline reveal */
+a {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  transition: background-size .25s ease, color .2s ease;
+}
+a:hover { background-size: 100% 1px; color: #7fd0da; }
+
+/* Optional variant tags/pills styling */
+.chip, .badge, .tag {
+  border-radius: 10px;
+  padding: .15rem .45rem;
+  background: rgba(120,200,210,.08);
+  border: 1px solid rgba(120,200,210,.25);
+}
+
+/* === Injected v14: Typography redesign (no stretch) + About hover outline removal === */
+
+/* 0) Neutralize any previous text-transform/stretch system */
+:root {
+  --txX: 1 !important;
+  --txY: 1 !important;
+  --txLS: 0px !important;
+  --txGlow: 0 !important;
+}
+h1, h2, h3, h4, h5, h6,
+p, li, a, blockquote, figcaption, small, .chip, .badge, .tag {
+  transform: none !important;
+  letter-spacing: normal !important;
+  text-shadow: none; /* will re-add selectively below */
+}
+
+/* 1) ABOUT: remove hover outline but keep bevel/shadow for focus items */
+#about *:hover { outline: none !important; }
+#about .about-raise,
+#about .about-raise:hover {
+  /* preserve bevel-like feel */
+  box-shadow: 0 10px 24px rgba(0,0,0,.28), 0 0 0 1px rgba(120,200,210,.25) inset;
+  outline: none !important;
+}
+#about .is-skill-hovered { outline: none !important; }
+
+/* 2) Global typography refresh */
+:root {
+  --tx-base: #d9eaf0;
+  --tx-dim: #b8ccd3;
+  --tx-strong: #eef9fb;
+  --tx-accent: #7fd0da;
+  --tx-muted: #8fb3bd;
+  --tx-shadow: rgba(0, 20, 28, .28);
+}
+html { scroll-behavior: smooth; }
+body {
+  color: var(--tx-base);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Headings */
+h1, h2, h3 {
+  line-height: 1.15;
+  letter-spacing: .2px;
+  background: linear-gradient(180deg, #f4feff, #bfe6ec 55%, #84d2db 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 4px 18px rgba(97,183,194,.18);
+}
+h1 { font-weight: 800; }
+h2 { font-weight: 700; }
+h3 { font-weight: 600; }
+h4, h5, h6 {
+  color: var(--tx-strong);
+  letter-spacing: .15px;
+  text-shadow: 0 2px 10px rgba(97,183,194,.12);
+}
+
+/* Paragraphs & readable widths */
+p {
+  max-width: 72ch;
+  line-height: 1.75;
+  color: var(--tx-base);
+}
+p.lead {
+  font-size: 1.1em;
+  color: var(--tx-strong);
+}
+
+/* Lists */
+ul, ol {
+  padding-left: 1.3rem;
+}
+ul li {
+  position: relative;
+  margin: .35rem 0;
+  color: var(--tx-base);
+}
+ul li::marker { color: var(--tx-accent); }
+ol li { color: var(--tx-base); }
+
+/* Links */
+a {
+  color: var(--tx-strong);
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  transition: background-size .25s ease, color .2s ease, text-shadow .2s ease;
+}
+a:hover {
+  background-size: 100% 1px;
+  color: var(--tx-accent);
+  text-shadow: 0 0 14px rgba(127,208,218,.25);
+}
+
+/* Blockquotes */
+blockquote {
+  position: relative;
+  margin: 1.2rem 0;
+  padding: .9rem 1.1rem .9rem 1.2rem;
+  color: var(--tx-strong);
+  border-left: 3px solid rgba(127,208,218,.5);
+  background: linear-gradient(180deg, rgba(120,200,210,.08), rgba(120,200,210,.02));
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.18);
+}
+
+/* Figcaptions & small text */
+figcaption, small { color: var(--tx-muted); }
+
+/* Chips / tags */
+.chip, .badge, .tag {
+  border-radius: 12px;
+  padding: .18rem .5rem;
+  background: rgba(120,200,210,.08);
+  border: 1px solid rgba(120,200,210,.24);
+  color: var(--tx-strong);
+}
+
+/* Code & kbd (if present) */
+code, kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background: rgba(120,200,210,.08);
+  border: 1px solid rgba(120,200,210,.24);
+  border-radius: 6px;
+  padding: .05rem .35rem;
+  color: var(--tx-strong);
+}
+
+/* Section headings spacing helper */
+section > h2, section > h1 {
+  margin-bottom: .35rem;
+}
+
+/* === Injected v15 === */
+
+/* -------- Skills: floating summary tooltip -------- */
+#skill-fly {
+  position: fixed;
+  top: 0; left: 0;
+  transform: translate(-50%, -130%) scale(.98);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10000;
+  background: rgba(16,22,26,.92);
+  border: 1px solid rgba(120,200,210,.35);
+  border-radius: 10px;
+  padding: .5rem .65rem;
+  font-size: .85rem;
+  line-height: 1.25;
+  box-shadow: 0 12px 28px rgba(0,0,0,.35);
+  max-width: 300px;
+  color: #dff1f6;
+  transition: opacity .15s ease, transform .15s ease;
+}
+#skill-fly.show {
+  opacity: 1;
+  transform: translate(-50%, -140%) scale(1);
+}
+#skills .is-skill-hovered {
+  outline: none !important; /* no dashed outline in About */
+}
+
+/* -------- HERO particle overlay (cursor reactive) -------- */
+#hero { position: relative; overflow: hidden; }
+#hero #hero-reactive-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 2; /* above background art, below text */
+  mix-blend-mode: lighten;
+}
+
+/* -------- Top nav: dashboard curve (always visible) -------- */
+#main-nav {
+  position: sticky;
+  top: 0;
+  z-index: 9998;
+  background: rgba(16,22,26,0.55);
+  border: 1px solid rgba(120,200,210,0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-radius .3s ease, box-shadow .3s ease, background .3s ease, transform .2s ease;
+}
+#main-nav.dashboard {
+  border-bottom-left-radius: 26px;
+  border-bottom-right-radius: 26px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.25);
+}
+/* Curved bottom lip */
+#main-nav.dashboard::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) scaleX(var(--curveScale,1));
+  bottom: -12px;
+  width: min(92%, 1240px);
+  height: 24px;
+  border-radius: 0 0 40px 40px;
+  background: radial-gradient(120% 100% at 50% 0%,
+              rgba(120,200,210,.25), rgba(120,200,210,.08) 50%, transparent 70%);
+  filter: blur(8px);
+  pointer-events: none;
+  opacity: var(--curveAlpha, .6);
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+/* === Injected v16: Bold Cinematic Black-Hole Cursor === */
+html, body { cursor: none; } /* hide default cursor for full effect */
+#cursor-blackhole {
+  position: fixed;
+  inset: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 100000; /* above everything */
+}
+/* Optional: mark small elements as attractable for slight pull */
+.attractable, .chip, .tag, .badge, a, button {
+  will-change: transform;
+}
+</style>
+</head>
+<body>
+
+<!-- Live scroll FX canvas -->
+<canvas id="atfx-canvas" aria-hidden="true"></canvas>
+
+
+<!-- ===== Side Navigator (added) ===== -->
+<nav class="side-nav" aria-label="Section navigator">
+  <div class="indicator" aria-hidden="true"></div>
+  <button class="nav-item" data-target="about" title="About"><span class="icon" aria-hidden="true">🧑‍💻</span></button>
+  <button class="nav-item" data-target="projects" title="Projects"><span class="icon" aria-hidden="true">💼</span></button>
+  <button class="nav-item" data-target="skills" title="Skills"><span class="icon" aria-hidden="true">🧠</span></button>
+  <button class="nav-item" data-target="hobbies" title="Hobbies"><span class="icon" aria-hidden="true">🎯</span></button>
+  <button class="nav-item" data-target="resume" title="Résumé"><span class="icon" aria-hidden="true">📄</span></button>
+  <button class="nav-item" data-target="contact" title="Get in Touch"><span class="icon" aria-hidden="true">✉️</span></button>
+</nav>
+
+<!-- Cursor-follow subtle glow -->
+<div id="cursor-glow" aria-hidden="true"></div>
+
+  <!-- Scroll Progress -->
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <!-- Preloader -->
+  <div id="loading" class="fixed inset-0 flex items-center justify-center z-[55] transition-opacity duration-500 opacity-100" style="background:var(--bg)">
+    <div class="animate-pulse text-3xl font-serif">Loading…</div>
+  </div>
+
+  <!-- NAV -->
+  <nav id="main-nav" class="fixed top-0 left-0 right-0 z-50 py-4 transition-all duration-300">
+    <div class="container mx-auto flex justify-between items-center px-6">
+      <a href="#hero" class="text-3xl font-bold font-serif text-accent-color">Vedant</a>
+      <div class="hidden md:flex items-center gap-3">
+        <a href="#about" class="nav-link text-lg">About</a>
+        <a href="#projects" class="nav-link text-lg">Projects</a>
+        <a href="#skills" class="nav-link text-lg">Skills</a>
+        <a href="#contact" class="nav-link text-lg">Contact</a>
+        <button id="theme-toggle" class="theme-toggle ml-2" aria-label="Toggle theme" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <span class="text-sm">Theme</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="relative z-10">
+    <!-- HERO -->
+    <section id="hero" class="relative w-full h-screen overflow-hidden flex flex-col items-center justify-center text-center">
+      <canvas id="hero-canvas" aria-hidden="true"></canvas>
+      <div id="hero-content" class="relative z-20 flex flex-col justify-center items-center h-full px-6">
+        <p class="text-xl md:text-2xl lg:text-3xl max-w-3xl mb-12 text-gray-300 font-light tracking-wide">Building elegant ideas with clean engineering.</p>
+        <div class="flex flex-col md:flex-row gap-4 mt-6">
+          <a href="#projects" class="cta-button py-3 px-8 rounded-2xl text-lg font-medium tracking-wide">View Projects</a>
+          <a href="#resume" class="cta-button py-3 px-8 rounded-2xl text-lg font-medium tracking-wide">Download Résumé</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTENT WRAPPER -->
+    <div class="relative z-30 py-24 px-6 md:px-12 lg:px-24">
+      <!-- ABOUT -->
+      <section id="about" class="section-raise container mx-auto py-24 fx-tilt fx-parallax"">
+  <div class=\"layer\" aria-hidden=\"true\"></div>
+  <div class="max-w-4xl mx-auto">
+    <div class="text-center mb-8">
+      <h2 class="text-4xl md:text-5xl about-heading">About</h2>
+      <p class="mt-4 text-gray-300 max-w-2xl mx-auto">Electronics for me is where physics meets problem-solving. I love exploring how small-scale device behavior shapes large-scale system performance — from device models to embedded control loops.</p>
+    </div>
+
+    <div class="about-grid relative">
+      <!-- left/primary column -->
+      <div style="position:relative; z-index:5;">
+        <div class="about-decor" aria-hidden="true"></div>
+
+        <div class="about-text" style="z-index:6;">
+          <p class="text-lg leading-loose mb-4">Whether it’s simulating transistor structures, writing Verilog for a processor pipeline, or tuning embedded control loops, I enjoy building systems that are technically sound and thoughtfully designed.</p>
+          <div class="about-badge">Currently: device modeling • RF systems • embedded workflows</div>
+
+          <div class="fancy-cards" aria-hidden="false">
+            <div class="fancy-card" role="article" tabindex="0" aria-label="Location card">
+              <div class="fancy-icon">📍</div>
+              <div>
+                <h5>Location</h5>
+                <p>Bhopal, India</p>
+              </div>
+            </div>
+
+            <div class="fancy-card" role="article" tabindex="0" aria-label="Focus areas card">
+              <div class="fancy-icon">⚙️</div>
+              <div>
+                <h5>Focus Areas</h5>
+                <p>VLSI · Embedded · RF/Comms</p>
+              </div>
+            </div>
+
+            <div class="fancy-card" role="article" tabindex="0" aria-label="Toolchain card">
+              <div class="fancy-icon">🧰</div>
+              <div>
+                <h5>Toolchain</h5>
+                <p>Vivado · Cadence · LTspice · Git</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="about-list" aria-hidden="false">
+            <div><span class="dot">•</span> Problem decomposition</div>
+            <div><span class="dot">•</span> Reproducible tests</div>
+            <div><span class="dot">•</span> Practical simulations</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- right/portrait column -->
+      <div class="flex justify-center lg:justify-end items-center">
+        <div class="portrait-wrap" aria-hidden="false" role="img" aria-label="Portrait of Vedant">
+          <div class="portrait-orb" aria-hidden="true"></div>
+          <div class="portrait-inner">
+            <div class="portrait-ring"></div>
+            <div class="portrait-border"></div>
+            <img src="assets/vedant.jpg" alt="Vedant portrait" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+      <!-- PROJECTS -->
+      <section id="projects" class="section-raise container mx-auto py-24 animate-fade-in-up fx-tilt fx-parallax"">
+  <div class=\"layer\" aria-hidden=\"true\"></div>
+        <h2 class="text-4xl md:text-5xl text-center mb-12">Projects & Internships</h2>
+        <div class="flex justify-center flex-wrap gap-3 mb-12">
+          <button data-filter="all" class="filter-btn py-2 px-6 rounded-2xl text-sm font-medium transition-colors duration-300 border border-gray-700 hover:border-teal-300 hover:bg-teal-400/90 hover:text-black">All</button>
+          <button data-filter="internship" class="filter-btn py-2 px-6 rounded-2xl text-sm font-medium transition-colors duration-300 border border-gray-700 hover:border-teal-300 hover:bg-teal-400/90 hover:text-black">Internships</button>
+          <button data-filter="projects" class="filter-btn py-2 px-6 rounded-2xl text-sm font-medium transition-colors duration-300 border border-gray-700 hover:border-teal-300 hover:bg-teal-400/90 hover:text-black">Projects</button>
+        </div>
+
+        <div id="project-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+          <!-- Cards (same as your last version) -->
+          <div class="project-card glass-card rounded-2xl overflow-hidden cursor-pointer tilt" data-id="sspl-drdo" data-tags="internship" tabindex="0" aria-label="Open details for SSPL DRDO internship">
+            <img src="https://placehold.co/800x600/333333/61b7c2?text=DRDO+Internship" alt="DRDO Internship" class="w-full h-64 object-cover" />
+            <div class="p-6">
+              <h3 class="text-xl font-semibold mb-2">SSPL DRDO</h3>
+              <p class="text-sm mb-4">Internship Trainee · New Delhi</p>
+              <div class="flex flex-wrap gap-2 text-xs font-semibold"><span class="tag-chip px-3 py-1 rounded-full">Internship</span></div>
+            </div>
+            <div class="glass-overlay"><span class="glass-surface"></span><div class="glass-content"></div></div>
+          </div>
+
+          <div class="project-card glass-card rounded-2xl overflow-hidden cursor-pointer tilt" data-id="maven-silicon" data-tags="internship" tabindex="0" aria-label="Open details for Maven Silicon internship">
+            <img src="https://placehold.co/800x600/333333/61b7c2?text=Maven+Silicon" alt="Maven Silicon Internship" class="w-full h-64 object-cover" />
+            <div class="p-6">
+              <h3 class="text-xl font-semibold mb-2">Maven Silicon</h3>
+              <p class="text-sm mb-4">Project Intern · Remote</p>
+              <div class="flex flex-wrap gap-2 text-xs font-semibold"><span class="tag-chip px-3 py-1 rounded-full">Internship</span></div>
+            </div>
+            <div class="glass-overlay"><span class="glass-surface"></span><div class="glass-content"></div></div>
+          </div>
+
+          <!-- Mount Meru Internship: NEW -->
+          <div class="project-card glass-card rounded-2xl overflow-hidden cursor-pointer tilt" data-id="mount-meru" data-tags="internship" tabindex="0" aria-label="Open details for Mount Meru internship">
+            <img src="https://placehold.co/800x600/333333/61b7c2?text=Mount+Meru+Group" alt="Mount Meru Group Internship" class="w-full h-64 object-cover" />
+            <div class="p-6">
+              <h3 class="text-xl font-semibold mb-2">Mount Meru Group</h3>
+              <p class="text-sm mb-4">Intern · Supply Chain & Process · Rwanda</p>
+              <div class="flex flex-wrap gap-2 text-xs font-semibold"><span class="tag-chip px-3 py-1 rounded-full">Internship</span></div>
+            </div>
+            <div class="glass-overlay"><span class="glass-surface"></span><div class="glass-content"></div></div>
+          </div>
+
+          <div class="project-card glass-card rounded-2xl overflow-hidden cursor-pointer tilt" data-id="mimo-antenna" data-tags="projects" tabindex="0" aria-label="Open details for MIMO Patch Antenna project">
+            <img src="https://placehold.co/800x600/333333/61b7c2?text=MIMO+Antenna" alt="MIMO Patch Antenna Design" class="w-full h-64 object-cover" />
+            <div class="p-6">
+              <h3 class="text-xl font-semibold mb-2">MIMO Patch Antenna Design</h3>
+              <p class="text-sm mb-4">λ/4 decoupling · CST Simulations</p>
+              <div class="flex flex-wrap gap-2 text-xs font-semibold"><span class="tag-chip px-3 py-1 rounded-full">Project</span></div>
+            </div>
+            <div class="glass-overlay"><span class="glass-surface"></span><div class="glass-content"></div></div>
+          </div>
+
+          <div class="project-card glass-card rounded-2xl overflow-hidden cursor-pointer tilt" data-id="risc-v" data-tags="projects" tabindex="0" aria-label="Open details for RISC-V RV32I project">
+            <img src="https://placehold.co/800x600/333333/61b7c2?text=RISC-V" alt="RISC-V RV32I Processor Design" class="w-full h-64 object-cover" />
+            <div class="p-6">
+              <h3 class="text-xl font-semibold mb-2">RISC-V RV32I Processor</h3>
+              <p class="text-sm mb-4">5-stage pipeline · Verilog · UVM</p>
+              <div class="flex flex-wrap gap-2 text-xs font-semibold"><span class="tag-chip px-3 py-1 rounded-full">Project</span></div>
+            </div>
+            <div class="glass-overlay"><span class="glass-surface"></span><div class="glass-content"></div></div>
+          </div>
+
+          <div class="project-card glass-card rounded-2xl overflow-hidden cursor-pointer tilt" data-id="can-system" data-tags="projects" tabindex="0" aria-label="Open details for CAN accident avoidance project">
+            <img src="https://placehold.co/800x600/333333/61b7c2?text=CAN+System" alt="CAN-Based Accident Avoidance System" class="w-full h-64 object-cover" />
+            <div class="p-6">
+              <h3 class="text-xl font-semibold mb-2">CAN Accident Avoidance</h3>
+              <p class="text-sm mb-4">Arduino · MCP2515 · Ultrasonics</p>
+              <div class="flex flex-wrap gap-2 text-xs font-semibold"><span class="tag-chip px-3 py-1 rounded-full">Project</span></div>
+            </div>
+            <div class="glass-overlay"><span class="glass-surface"></span><div class="glass-content"></div></div>
+          </div>
+
+          <div class="project-card glass-card rounded-2xl overflow-hidden cursor-pointer tilt" data-id="deep-learning" data-tags="projects" tabindex="0" aria-label="Open details for DL channel estimation project">
+            <img src="https://placehold.co/800x600/333333/61b7c2?text=Deep+Learning" alt="Deep Learning for Channel Estimation" class="w-full h-64 object-cover" />
+            <div class="p-6">
+              <h3 class="text-xl font-semibold mb-2">DL for UV MIMO Channel Estimation</h3>
+              <p class="text-sm mb-4">TensorFlow · MATLAB · Python</p>
+              <div class="flex flex-wrap gap-2 text-xs font-semibold"><span class="tag-chip px-3 py-1 rounded-full">Project</span></div>
+            </div>
+            <div class="glass-overlay"><span class="glass-surface"></span><div class="glass-content"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SKILLS -->
+      <section id="skills" class="section-raise container mx-auto py-24 animate-fade-in-up fx-tilt fx-parallax"">
+  <div class=\"layer\" aria-hidden=\"true\"></div>
+        <h2 class="text-4xl md:text-5xl text-center mb-12">Skills</h2>
+        <div class="max-w-4xl mx-auto space-y-12">
+          <div>
+            <h3 class="text-2xl font-semibold mb-4 text-accent-color">Programming Languages</h3>
+            <div class="skills-grid" id="skills-grid-langs">
+              <span class="skill-chip glass">Embedded C</span>
+              <span class="skill-chip glass">C++</span>
+              <span class="skill-chip glass">Python</span>
+              <span class="skill-chip glass">Verilog</span>
+            </div>
+            <div id="skill-panel" aria-live="polite"></div>
+          </div>
+          <div>
+            <h3 class="text-2xl font-semibold mb-4 text-accent-color">Tools & Platforms</h3>
+            <div class="skills-grid" id="skills-grid-tools">
+              <span class="skill-chip glass">STM32CubeIDE</span>
+              <span class="skill-chip glass">Keil</span>
+              <span class="skill-chip glass">Proteus</span>
+              <span class="skill-chip glass">LTspice</span>
+              <span class="skill-chip glass">Vivado</span>
+              <span class="skill-chip glass">Cadence Virtuoso</span>
+              <span class="skill-chip glass">Git</span>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-2xl font-semibold mb-4 text-accent-color">Domain Knowledge</h3>
+            <div class="skills-grid" id="skills-grid-domain">
+              <span class="skill-chip glass">Microcontrollers</span>
+              <span class="skill-chip glass">GPIOs</span>
+              <span class="skill-chip glass">Embedded Protocols</span>
+              <span class="skill-chip glass">Digital Electronics</span>
+              <span class="skill-chip glass">Analog IC Design</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HOBBIES -->
+      <section id="hobbies" class="section-raise container mx-auto py-24 animate-fade-in-up fx-tilt fx-parallax"">
+  <div class=\"layer\" aria-hidden=\"true\"></div>
+        <h2 class="text-4xl md:text-5xl text-center mb-12">Hobbies</h2>
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Photography -->
+          <div class="hobby-card p-8 rounded-2xl shadow-lg text-center">
+            <div class="hobby-media">
+              <video class="hobby-video" muted playsinline preload="metadata" poster="https://placehold.co/600x400?text=Photography+Poster">
+                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4" />
+                <!-- fallback text -->
+              </video>
+              <div class="hobby-scrim"></div>
+            </div>
+            <div class="hobby-emoji">📷</div>
+            <h3 class="text-2xl font-semibold mb-2 relative z-[1]">Photography</h3>
+            <p class="text-gray-300 relative z-[1]">Capturing textures & patterns that inspire circuit topologies.</p>
+          </div>
+          <!-- Cooking -->
+          <div class="hobby-card p-8 rounded-2xl shadow-lg text-center">
+            <div class="hobby-media">
+              <video class="hobby-video" muted playsinline preload="metadata" poster="https://placehold.co/600x400?text=Cooking+Poster">
+                <source src="https://videos.pexels.com/video-files/5793734/5793734-hd_1280_720_25fps.mp4" type="video/mp4" />
+              </video>
+              <div class="hobby-scrim"></div>
+            </div>
+            <div class="hobby-emoji">🍳</div>
+            <h3 class="text-2xl font-semibold mb-2 relative z-[1]">Cooking</h3>
+            <p class="text-gray-300 relative z-[1]">Experimenting with ratios & timing—like tuning control loops.</p>
+          </div>
+          <!-- Piano -->
+<div class="hobby-card p-8 rounded-2xl shadow-lg text-center">
+  <div class="hobby-media">
+    <video class="hobby-video" muted playsinline preload="metadata" loop autoplay poster="...">
+
+      <source src="https://videos.pexels.com/video-files/7571454/7571454-hd_1280_720_25fps.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+    <div class="hobby-scrim"></div>
+  </div>
+  <div class="hobby-emoji">🎹</div>
+  <h3 class="text-2xl font-semibold mb-2 relative z-[1]">Playing the Piano</h3>
+  <p class="text-gray-300 relative z-[1]">
+    Finding balance between rhythm and precision — like timing logic in circuits.
+  </p>
+</div>
+
+
+        </div>
+      </section>
+
+     <!-- RESUME CTA -->
+<section id="resume" class="section-raise container mx-auto py-24 animate-fade-in-up fx-tilt fx-parallax"">
+  <div class=\"layer\" aria-hidden=\"true\"></div>
+  <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between p-8 rounded-2xl bg-card-bg shadow-lg">
+    <p class="text-xl md:text-2xl font-semibold mb-4 md:mb-0">
+      Need a closer look? Find more details on my résumé.
+    </p>
+
+    <!-- Option A: open in a new tab -->
+    <a href="assets/resume/Vedant_Vishwakarma_Resume.pdf"
+       target="_blank" rel="noopener"
+       class="cta-button py-3 px-8 rounded-2xl text-lg font-medium tracking-wide"
+       aria-label="Open Résumé in a new tab">
+       View Résumé
+    </a>
+
+    <!-- Option B: force download (use this instead of the above if you prefer) -->
+    <!--
+    <a href="assets/Vedant_Vishwakarma_Resume.pdf"
+       download
+       class="cta-button py-3 px-8 rounded-2xl text-lg font-medium tracking-wide"
+       aria-label="Download Résumé">
+       Download Résumé
+    </a>
+    -->
+  </div>
+</section>
+
+          <!-- CONTACT -->
+    <section id="contact" class="section-raise container mx-auto py-24 animate-fade-in-up fx-tilt fx-parallax"">
+  <div class=\"layer\" aria-hidden=\"true\"></div>
+      <h2 class="text-4xl md:text-5xl text-center mb-12 font-serif">Get In Touch</h2>
+    
+      <div class="max-w-3xl mx-auto p-8 rounded-2xl bg-card-bg shadow-lg bevel-raise">
+        <form id="contact-form"
+      action="https://formspree.io/f/mrboqjvl"   
+      method="POST"
+      class="space-y-6">
+
+  <!-- inbox subject -->
+  <input type="hidden" name="_subject" value="New message from your portfolio" />
+  <!-- simple honeypot to cut spam -->
+  <input type="text" name="_honeypot" tabindex="-1" autocomplete="off"
+         style="position:absolute;left:-9999px;opacity:0" />
+
+          <div>
+            <label for="name" class="block text-sm font-medium mb-1">Name</label>
+            <input type="text" id="name" name="name"
+                   class="w-full p-3 rounded-xl border border-gray-700 focus:outline-none focus:border-teal-300 transition-colors bg-[#121212] text-white"
+                   required />
+          </div>
+          <div>
+            <label for="email" class="block text-sm font-medium mb-1">Email</label>
+            <input type="email" id="email" name="email"
+                   class="w-full p-3 rounded-xl border border-gray-700 focus:outline-none focus:border-teal-300 transition-colors bg-[#121212] text-white"
+                   required />
+          </div>
+          <div>
+            <label for="message" class="block text-sm font-medium mb-1">Message</label>
+            <textarea id="message" name="message" rows="5"
+                      class="w-full p-3 rounded-xl border border-gray-700 focus:outline-none focus:border-teal-300 transition-colors bg-[#121212] text-white"
+                      required></textarea>
+          </div>
+  <p id="form-status" class="text-sm text-center"></p>
+  <button type="submit"
+          class="cta-button w-full py-3 rounded-2xl text-lg font-medium tracking-wide">
+    Send Message
+  </button>
+</form>
+
+    
+        <!-- Social Links -->
+        <div class="flex justify-center gap-8 mt-12 text-lg font-medium text-gray-300">
+          <a href="https://github.com/Muraskii"
+             target="_blank" rel="noopener"
+             aria-label="GitHub"
+             class="hover:text-[var(--accent)] transition-colors duration-200">
+            <i class="fa-brands fa-github mr-1"></i> GitHub
+          </a>
+    
+          <a href="https://www.linkedin.com/in/vedant-vishwakarma-286470185/"
+             target="_blank" rel="noopener"
+             aria-label="LinkedIn"
+             class="hover:text-[var(--accent)] transition-colors duration-200">
+            <i class="fa-brands fa-linkedin mr-1"></i> LinkedIn
+          </a>
+    
+          <a href="mailto:vedantvish07@gmail.com"
+             aria-label="Email"
+             class="hover:text-[var(--accent)] transition-colors duration-200">
+            <i class="fa-solid fa-envelope mr-1"></i> Email
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+  <!-- FOOTER -->
+  <footer class="py-12 bg-card-bg text-center text-sm" style="color:var(--muted)">
+    <p>&copy; 2025 Vedant. All rights reserved.</p>
+    <div class="mt-4 space-x-4">
+      <a href="#about" class="hover:text-accent-color transition-colors">About</a>
+      <a href="#projects" class="hover:text-accent-color transition-colors">Projects</a>
+      <a href="#contact" class="hover:text-accent-color transition-colors">Contact</a>
+    </div>
+    <a href="#hero" class="mt-4 block hover:text-accent-color transition-colors">Back to Top</a>
+  </footer>
+
+  <!-- MODAL -->
+  <div id="modal-backdrop" class="modal-backdrop" aria-hidden="true" role="dialog" aria-labelledby="modal-title">
+    <div id="modal-content" class="modal-content rounded-3xl">
+      <button id="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors" aria-label="Close">✕</button>
+      <div id="modal-body" class="p-4 overflow-y-auto max-h-[70vh]"></div>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+// Rebuild HERO particles with a new count
+function rebuildHeroParticles(newCount) {
+  // dispose old mesh/geometry/material safely
+  if (particleMesh) {
+    if (particleMesh.geometry) particleMesh.geometry.dispose();
+    // keep material to preserve color and settings
+    scene.remove(particleMesh);
+  }
+
+  // reallocate arrays
+  const positions = new Float32Array(newCount * 3);
+  const velocities = new Float32Array(newCount * 3);
+  const colorsArr = new Float32Array(newCount * 3);
+  const c = new THREE.Color();
+
+  for (let i = 0; i < newCount; i++) {
+    const i3 = i * 3;
+    positions[i3]     = (Math.random() - 0.5) * 400;
+    positions[i3 + 1] = (Math.random() - 0.5) * 400;
+    positions[i3 + 2] = (Math.random() - 0.5) * 400;
+    velocities[i3]     = (Math.random() - 0.5) * 0.05;
+    velocities[i3 + 1] = (Math.random() - 0.5) * 0.05;
+    velocities[i3 + 2] = (Math.random() - 0.5) * 0.05;
+    c.setHSL(0.52 + Math.random() * 0.18, 0.8, 0.55);
+    colorsArr[i3]     = c.r;
+    colorsArr[i3 + 1] = c.g;
+    colorsArr[i3 + 2] = c.b;
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('color',    new THREE.BufferAttribute(colorsArr, 3));
+
+  // reuse existing PointsMaterial if available, otherwise make one
+  const mat = (particleMesh && particleMesh.material) ||
+    new THREE.PointsMaterial({
+      size: 1.4,
+      vertexColors: true,
+      blending: THREE.AdditiveBlending,
+      transparent: true,
+      opacity: 0.85,
+      sizeAttenuation: true,
+      color: heroColorHex()
+    });
+
+  // reassign globals used elsewhere
+  particleMesh = new THREE.Points(geo, mat);
+  scene.add(particleMesh);
+
+  // also update any arrays you use in your animate() loop:
+  // (match your existing variable names)
+  particlePositions = positions;
+  particleVelocities = velocities;
+}
+
+// Example resize hook (guarded so we don't rebuild too often)
+let heroRebuildRAF = 0;
+window.addEventListener('resize', () => {
+  cancelAnimationFrame(heroRebuildRAF);
+  heroRebuildRAF = requestAnimationFrame(() => {
+    const next = heroParticleCountFromArea();
+    rebuildHeroParticles(next);
+  });
+});
+
+// ===== HERO Particle Helpers =====
+function heroParticleCountFromArea() {
+  const area = window.innerWidth * window.innerHeight;
+  return Math.max(600, Math.round((area / 100000) * window.particleTheme.countPer100k));
+}
+function heroColorHex() {
+  const dark = document.documentElement.dataset.theme === 'dark';
+  return dark ? 0x9be7f2 : 0x283c46; // matches section color tones
+}
+
+    const sections = document.querySelectorAll('.animate-fade-in-up');
+    const nav = document.getElementById('main-nav');
+    const heroSection = document.getElementById('hero');
+    const navLinks = document.querySelectorAll('#main-nav a');
+    const loadingScreen = document.getElementById('loading');
+    const progressBar = document.getElementById('scroll-progress');
+    const themeToggle = document.getElementById('theme-toggle');
+    /* ===== Attach tilt to fancy-cards (re-uses existing attachTilt if present) ===== */
+(function(){
+  // Use existing attachTilt if already defined, otherwise provide a compact version:
+  if (typeof attachTilt !== 'function') {
+    window.attachTilt = function(rootEl, opts = {}) {
+      if (!rootEl) return { destroy: ()=>{} };
+      const maxTilt = opts.maxTilt ?? 6;
+      const depth = opts.depth ?? 8;
+      const clamp = opts.clamp ?? true;
+      const surface = rootEl;
+      rootEl.classList.add('tilt-target');
+      const highlight = rootEl.querySelector('.card-highlight');
+
+      let raf = null;
+      const rect = () => rootEl.getBoundingClientRect();
+
+      function apply(rx, ry, tz) {
+        surface.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(${tz}px)`;
+        if (Math.abs(rx) > 0.1 || Math.abs(ry) > 0.1) rootEl.classList.add('tilt-active');
+        else rootEl.classList.remove('tilt-active');
+      }
+
+      function moveHandler(e) {
+        const r = rect();
+        const p = ('touches' in e && e.touches[0]) ? e.touches[0] : e;
+        const dx = (p.clientX - (r.left + r.width/2)) / (r.width/2);
+        const dy = (p.clientY - (r.top + r.height/2)) / (r.height/2);
+        const nx = clamp ? Math.max(-1, Math.min(1, dx)) : dx;
+        const ny = clamp ? Math.max(-1, Math.min(1, dy)) : dy;
+        const ry = (nx * maxTilt).toFixed(2);
+        const rx = (-ny * maxTilt).toFixed(2);
+        const tz = Math.max(0, depth * (1 - Math.hypot(nx, ny)));
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(()=> apply(rx, ry, tz));
+      }
+
+      function enter() {
+        rootEl.classList.add('hovering');
+        surface.style.transition = `transform .18s cubic-bezier(.2,.9,.3,1)`;
+      }
+      function leave() {
+        rootEl.classList.remove('hovering');
+        if (raf) cancelAnimationFrame(raf);
+        surface.style.transform = '';
+        rootEl.classList.remove('tilt-active');
+      }
+
+      rootEl.addEventListener('mousemove', moveHandler, {passive:true});
+      rootEl.addEventListener('touchmove', moveHandler, {passive:true});
+      rootEl.addEventListener('mouseenter', enter);
+      rootEl.addEventListener('touchstart', enter, {passive:true});
+      rootEl.addEventListener('mouseleave', leave);
+      rootEl.addEventListener('touchend', leave);
+      rootEl.addEventListener('focusin', enter);
+      rootEl.addEventListener('focusout', leave);
+
+      return {
+        destroy() {
+          rootEl.removeEventListener('mousemove', moveHandler);
+          rootEl.removeEventListener('touchmove', moveHandler);
+          rootEl.removeEventListener('mouseenter', enter);
+          rootEl.removeEventListener('mouseleave', leave);
+          rootEl.removeEventListener('touchstart', enter);
+          rootEl.removeEventListener('touchend', leave);
+          rootEl.removeEventListener('focusin', enter);
+          rootEl.removeEventListener('focusout', leave);
+        }
+      };
+    };
+  }
+
+  // Attach to each fancy-card with slightly smaller depth than portrait
+  document.querySelectorAll('.fancy-card').forEach(card => {
+    // avoid duplicate attach if re-run
+    if (!card.__tiltHandle) {
+      card.__tiltHandle = attachTilt(card, { maxTilt: 12, depth: 40 });
+    }
+  });
+})();
+
+    // Fancy about entrance: stagger in portrait + cards + underline
+(() => {
+  const about = document.getElementById('about');
+  if (!about) return;
+  // when visible, add classes
+  const obs = new IntersectionObserver((entries, o) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      // show underline
+      const h = about.querySelector('.about-heading');
+      if (h) h.classList.add('visible');
+
+      // pop-in portrait + text
+      const portrait = about.querySelector('.portrait-wrap');
+      const text = about.querySelector('.about-text');
+      setTimeout(() => portrait && portrait.classList.add('pop-in'), 120);
+      setTimeout(() => text && text.classList.add('pop-in'), 240);
+
+      // stagger cards
+      const cards = about.querySelectorAll('.fancy-card');
+      cards.forEach((c, i) => setTimeout(()=> c.classList.add('pop-in'), 360 + i*110));
+
+      o.disconnect();
+    });
+  }, {threshold:0.2});
+  obs.observe(about);
+  /* ===== lightweight tilt + bevel helper ===== */
+(function(){
+  const attachTilt = (rootEl, opts = {}) => {
+    if (!rootEl) return;
+    const {
+      maxTilt = 14,     // degrees
+      depth = 14,       // px translateZ for "pop"
+      ease = 0.18,      // transition time
+      highlight = true, // use moving highlight
+      clamp = true
+    } = opts;
+
+    const surface = rootEl.querySelector('.about-tilt-surface') || rootEl;
+    const portraitInner = rootEl.querySelector('.portrait-inner');
+    // optional highlight element (create if absent)
+    let highlightEl = rootEl.querySelector('.portrait-highlight');
+    if (highlight && portraitInner && !highlightEl) {
+      highlightEl = document.createElement('span');
+      highlightEl.className = 'portrait-highlight';
+      portraitInner.appendChild(highlightEl);
+    }
+
+    // ensure classes
+    rootEl.classList.add('tilt-target');
+    surface.classList.add('about-tilt-surface');
+
+    const rect = () => rootEl.getBoundingClientRect();
+
+    let raf = null;
+    let cur = {rx:0, ry:0, tz:0};
+
+    function applyTransform(rx, ry, tz) {
+      surface.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(${tz}px)`;
+      if (portraitInner) {
+        if (Math.abs(rx) > 0.1 || Math.abs(ry) > 0.1) portraitInner.classList.add('tilt-active');
+        else portraitInner.classList.remove('tilt-active');
+      }
+    }
+
+    function onMove(e) {
+      const r = rect();
+      const px = ('touches' in e && e.touches[0]) ? e.touches[0].clientX : e.clientX;
+      const py = ('touches' in e && e.touches[0]) ? e.touches[0].clientY : e.clientY;
+      const cx = r.left + r.width/2;
+      const cy = r.top + r.height/2;
+      const dx = (px - cx) / (r.width/2); // -1 .. 1
+      const dy = (py - cy) / (r.height/2); // -1 .. 1
+
+      // optionally clamp
+      const nx = clamp ? Math.max(-1, Math.min(1, dx)) : dx;
+      const ny = clamp ? Math.max(-1, Math.min(1, dy)) : dy;
+
+      const ry = (nx * maxTilt).toFixed(2);
+      const rx = (-ny * maxTilt).toFixed(2);
+      const tz = Math.max(0, depth * (1 - Math.hypot(nx, ny))); // more depth when center
+
+      // schedule via rAF to avoid layout thrash
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(()=> {
+        applyTransform(rx, ry, tz);
+        cur.rx = rx; cur.ry = ry; cur.tz = tz;
+        // move highlight if present
+        if (highlightEl) {
+          const localX = px - r.left;
+          const localY = py - r.top;
+          highlightEl.style.left = `${localX}px`;
+          highlightEl.style.top = `${localY}px`;
+          // slightly scale highlight with depth
+          highlightEl.style.transform = `translate(-50%,-50%) translateZ(${tz+6}px) scale(${1 + (depth - tz)/140})`;
+        }
+      });
+    }
+
+    function onEnter(e){
+      rootEl.classList.add('hovering');
+      surface.style.transition = `transform ${ease}s cubic-bezier(.2,.9,.3,1)`;
+      if (portraitInner) portraitInner.style.transition = `transform ${ease}s cubic-bezier(.2,.9,.3,1), box-shadow ${ease}s`;
+      if (highlightEl) highlightEl.style.transition = `opacity ${ease}s ease, transform ${ease}s ease, left ${ease}s ease, top ${ease}s ease`;
+      // initial small pop so there's a tactile response
+      surface.style.willChange = 'transform';
+    }
+
+    function onLeave(e){
+      rootEl.classList.remove('hovering');
+      if (raf) cancelAnimationFrame(raf);
+      // reset
+      surface.style.transform = '';
+      if (portraitInner) portraitInner.classList.remove('tilt-active');
+      if (highlightEl) {
+        highlightEl.style.opacity = 0;
+        // center highlight off-screen slowly
+      }
+    }
+
+    // wire events
+    rootEl.addEventListener('mousemove', onMove, {passive:true});
+    rootEl.addEventListener('touchmove', onMove, {passive:true});
+    rootEl.addEventListener('mouseenter', onEnter);
+    rootEl.addEventListener('touchstart', (e)=>{ onEnter(e); onMove(e); }, {passive:true});
+    rootEl.addEventListener('mouseleave', onLeave);
+    rootEl.addEventListener('touchend', onLeave);
+
+    // keyboard focus support (simulate hover inside)
+    rootEl.addEventListener('focusin', ()=> { rootEl.classList.add('hovering'); surface.style.transform = `translateZ(${depth/2}px)`; });
+    rootEl.addEventListener('focusout', ()=> { onLeave(); });
+
+    // return a small control so you can detach later if needed
+    return {
+      destroy: () => {
+        rootEl.removeEventListener('mousemove', onMove);
+        rootEl.removeEventListener('touchmove', onMove);
+        rootEl.removeEventListener('mouseenter', onEnter);
+        rootEl.removeEventListener('mouseleave', onLeave);
+        rootEl.removeEventListener('touchstart', onEnter);
+        rootEl.removeEventListener('touchend', onLeave);
+      }
+    };
+  };
+
+  // Attach to portrait and about area
+  const portraitWrap = document.querySelector('.portrait-wrap');
+  const aboutGrid = document.querySelector('.about-grid');
+
+  // portrait: small tilt, stronger depth for bevel
+  if (portraitWrap) attachTilt(portraitWrap, { maxTilt: 16, depth: 200 });
+
+  // about grid: wider surface, smaller depth
+  if (aboutGrid) attachTilt(aboutGrid, { maxTilt: 12, depth: 80, highlight: false });
+
+})();
+
+})();
+
+
+    /* ===== Theme Toggle ===== */
+    function applyTheme(theme){
+      document.documentElement.dataset.theme = theme;
+      localStorage.setItem('theme', theme);
+      // Update hero fog to match theme
+      if (scene && scene.fog){
+        scene.fog.color = new THREE.Color(theme === 'dark' ? 0x0f0f10 : 0xf7f7f9);
+      }
+      // Update toggle aria-pressed
+      themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    }
+    themeToggle.addEventListener('click', ()=> {
+      const next = (document.documentElement.dataset.theme === 'dark') ? 'light' : 'dark';
+      applyTheme(next);
+    });
+
+    /* ===== Project/Internship Data ===== */
+    const portfolioData = {
+      'sspl-drdo': {
+        title: 'SSPL DRDO', type: 'Internship Trainee', location: 'New Delhi, India',
+        details: [
+          'Prototyped C++ image processing kernels (Canny, Sobel, Haar cascades) with measurable speedups (≈1.3–1.6×) over baselines.',
+          'Hardened debug cycle: reduced repro time by ~40% via reproducible test harness & log scrapers.',
+          'Collaborated with a verification lead to triage failure signatures & write assert-style checks.'
+        ]
+      },
+      'maven-silicon': {
+        title: 'Maven Silicon', type: 'Project Intern', location: 'Remote',
+        details: [
+          'Implemented a 5-stage RV32I pipeline (IF/ID/EX/MEM/WB) with hazard detection & forwarding.',
+          'Built UVM env: driver/monitor/scoreboard; achieved high functional coverage on ISA subsets.',
+          'Tuned timing on critical paths (branch decision & memory stage) for stable 50MHz on FPGA.'
+        ]
+      },
+      'mount-meru': {
+        title: 'Mount Meru Group', type: 'Intern', location: 'Rwanda · Supply Chain & Process',
+        details: [
+          'Mapped end-to-end palm oil import flow (Malaysia/Indonesia → Mombasa → Kigali) and documented stakeholder roles.',
+          'Assisted in inbound logistics and on-site refining steps; contributed to yield/quality tracking procedures.',
+          'Performed a cost-analysis for bottle/carton production and helped quantify labour & material drivers.'
+        ]
+      },
+      'mimo-antenna': {
+        title: 'MIMO Patch Antenna Design', type: 'Project', location: 'CST Studio Suite',
+        details: [
+          'Four-element patch array with λ/4 spacing to reduce mutual coupling.',
+          'Measured |S11|≈10–12 dB, gains ≈6.1/6.8 dBi; verified isolation and pattern symmetry.',
+          'Optimized substrate & slot geometry for trade-offs in bandwidth vs. footprint.'
+        ]
+      },
+      'risc-v': {
+        title: 'RISC-V RV32I Processor', type: 'Project', location: 'Verilog · UVM',
+        details: [
+          'ISA-compliant pipeline with ALU, CSR-lite, branch/jump control & basic exception flow.',
+          'Constrained random tests & coverage collection; scoreboard cross-checks architectural state.',
+          'Regression automation to catch performance & correctness regressions.'
+        ]
+      },
+      'can-system': {
+        title: 'CAN Accident Avoidance', type: 'Project', location: 'Arduino · MCP2515',
+        details: [
+          'Ultrasonic ranging → thresholding → actuator control loop with servo braking.',
+          'CAN frames for multi-node telemetry; LCD status & fault indicators.',
+          'Noise-aware debouncing and watchdog for safer behavior in edge cases.'
+        ]
+      },
+      'deep-learning': {
+        title: 'DL for UV MIMO Channel Estimation', type: 'Project', location: 'TensorFlow · MATLAB',
+        details: [
+          'Designed models (BiLSTM/GRU) that denoise & reconstruct UV MIMO channels under scattering.',
+          'Benchmarked against classical estimators; improved RMSE and BER in low-SNR regimes.',
+          'Ablations for sequence length & augmentation; tracked generalization across channel stats.'
+        ]
+      }
+    };
+
+    /* ===== Modal wiring ===== */
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const modalBody = document.getElementById('modal-body');
+    const closeModalBtn = document.getElementById('close-modal');
+    const openModal = (id) => {
+      const d = portfolioData[id]; if(!d) return;
+      const list = d.details.map(x => `<li class="mb-2 list-disc list-inside">${x}</li>`).join('');
+      modalBody.innerHTML = `
+        <h3 id="modal-title" class="text-3xl font-bold mb-2">${d.title}</h3>
+        <p class="text-lg text-accent-color mb-4">${d.location}</p>
+        <p class="font-light mb-6" style="color:var(--muted)">${d.type}</p>
+        <ul class="text-lg" style="color:var(--text)">${list}</ul>`;
+      modalBackdrop.classList.add('open');
+      modalBackdrop.setAttribute('aria-hidden','false');
+    };
+    const closeModal = () => { modalBackdrop.classList.remove('open'); modalBackdrop.setAttribute('aria-hidden','true'); };
+    closeModalBtn.addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click', closeModal);
+    document.getElementById('modal-content').addEventListener('click', (e)=>e.stopPropagation());
+
+    /* ===== Populate hover overlays + click/keyboard ===== */
+    document.querySelectorAll('.project-card').forEach(card => {
+      const id = card.dataset.id; const d = portfolioData[id];
+      const glass = card.querySelector('.glass-content');
+      if (d && glass) {
+        const bullets = d.details.slice(0,3).map(x => `<li class="text-sm leading-relaxed">${x}</li>`).join('');
+        glass.innerHTML = `
+          <div class="mb-2">
+            <h4 class="text-lg font-semibold">${d.title}</h4>
+            <p class="text-xs" style="color:rgba(97,183,194,.9)">${d.type} · ${d.location}</p>
+          </div>
+          <ul class="list-disc list-inside space-y-1">${bullets}</ul>
+          <button class="mt-3 inline-flex items-center gap-2 text-sm underline decoration-teal-300/70 hover:decoration-teal-300" aria-label="Open ${d.title} details">Read more →</button>`;
+      }
+      card.addEventListener('click', ()=>{ openModal(id); });
+      card.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); openModal(id); } });
+      const overlayBtn = card.querySelector('.glass-content button');
+      if (overlayBtn) overlayBtn.addEventListener('click',(e)=>{ e.stopPropagation(); openModal(id); });
+    });
+
+    /* ===== Fancy tilt on hover ===== */
+    const maxTilt = 8;
+    const resetTilt = (el)=>{ el.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg)'; };
+    document.querySelectorAll('.tilt').forEach(el => {
+      el.addEventListener('mousemove', (e)=> {
+        const r = el.getBoundingClientRect();
+        const cx = r.left + r.width/2, cy = r.top + r.height/2;
+        const dx = (e.clientX - cx) / (r.width/2);
+        const dy = (e.clientY - cy) / (r.height/2);
+        const rx = (-dy * maxTilt).toFixed(2);
+        const ry = ( dx * maxTilt).toFixed(2);
+        el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+      });
+      el.addEventListener('mouseleave', ()=> resetTilt(el));
+      el.addEventListener('blur', ()=> resetTilt(el));
+    });
+
+    /* ===== Loading fade ===== */
+    window.addEventListener('load', () => {
+      loadingScreen.style.opacity = '0';
+      setTimeout(()=> loadingScreen.style.display='none', 450);
+    });
+
+    /* ===== Intersection reveals ===== */
+    const observer = new IntersectionObserver((entries)=> {
+      entries.forEach(entry=>{ if(entry.isIntersecting) entry.target.classList.add('is-visible'); });
+    }, {threshold:0.1});
+    sections.forEach(s => observer.observe(s));
+
+    /* ===== Sticky nav + scrollspy + progress ===== */
+    const contentSections = Array.from(document.querySelectorAll('section[id]'));
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      if (y > heroSection.offsetHeight * 0.1) nav.classList.add('nav-scrolled'); else nav.classList.remove('nav-scrolled');
+      const sh = document.body.scrollHeight - window.innerHeight;
+      const p = Math.max(0, Math.min(1, y / sh));
+      progressBar.style.transform = `scaleX(${p})`;
+      let current = '';
+      for (const s of contentSections){
+        if (y >= s.offsetTop - s.clientHeight/3) current = s.id;
+      }
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href').slice(1) === current) link.classList.add('active');
+      });
+    });
+
+    /* ===== Filtering ===== */
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const projects = document.querySelectorAll('.project-card');
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter;
+        filterBtns.forEach(b=>b.classList.remove('ring-2','ring-teal-300'));
+        btn.classList.add('ring-2','ring-teal-300');
+        projects.forEach(card => {
+          const tags = (card.getAttribute('data-tags')||'').split(' ');
+          const show = filter==='all' || tags.includes(filter);
+          card.style.display = show ? 'block' : 'none';
+          card.style.opacity = show ? '1' : '0';
+        });
+      });
+    });
+
+
+    /* ===== SKILLS: hover/tap descriptions ===== */
+    const skillPanel = document.getElementById('skill-panel');
+    const skillInfo = {
+      'Embedded C': { blurb: 'Low-level firmware, registers, interrupts, bare-metal drivers.', bullets: ['HAL & LL on STM32','ISR latency budgeting','Memory-safe patterns'] },
+      'C++': { blurb: 'Performance-sensitive modules and embedded tooling.', bullets: ['Modern C++ (17/20)','Templates & RAII','Unit tests & benches'] },
+      'Python': { blurb: 'Glue code, data tooling, quick sims.', bullets: ['NumPy/Matplotlib','Automation scripts','Device control APIs'] },
+      'Verilog': { blurb: 'RTL design & quick IP blocks.', bullets: ['Pipelining & hazards','Testbenches','Synth/debug pragmas'] },
+      'STM32CubeIDE': { blurb: 'Project bring-up and HAL codegen for STM32.', bullets: ['Clock trees','LL drivers','Linker maps'] },
+      'Keil': { blurb: 'ARM toolchain & debug.', bullets: ['CMSIS packs','ULINK debug','Map/elf analysis'] },
+      'Proteus': { blurb: 'Fast virtual bring-ups.', bullets: ['Schematic sims','uC co-sim','Failure playback'] },
+      'LTspice': { blurb: 'Signal chain prototyping.', bullets: ['Op-amp models','Noise analysis','Monte-Carlo'] },
+      'Vivado': { blurb: 'FPGA flows & timing.', bullets: ['IP integrator','Timing closure','ILA debug'] },
+      'Cadence Virtuoso': { blurb: 'Analog IC layout/sim.', bullets: ['Schematic-XL','ADE sim','Corners/RCX'] },
+      'Git': { blurb: 'Clean history & CI hooks.', bullets: ['Trunk-based','Hooks & lint','Submodules'] },
+      'Microcontrollers': { blurb: 'MCU selection, power/perf trade-offs, bring-up.', bullets: ['ARM Cortex-M','Peripherals','Boot & clocks'] },
+      'GPIOs': { blurb: 'Signal integrity & debouncing.', bullets: ['Schmitt & pull configs','EMI basics','Latency'] },
+      'Embedded Protocols': { blurb: 'Buses and framing.', bullets: ['I²C/SPI/UART','CAN','Custom packets'] },
+      'Digital Electronics': { blurb: 'From gates to pipelines.', bullets: ['Setup/hold','FSMs','CDC basics'] },
+      'Analog IC Design': { blurb: 'Blocks & non-idealities.', bullets: ['Biasing','Feedback','Mismatch'] },
+    };
+    const renderSkill = (name, el, evt=null) => {
+      const info = skillInfo[name]; if (!info) return;
+      document.querySelectorAll('.skill-chip').forEach(s=>s.classList.remove('active'));
+      el.classList.add('active');
+      if (evt && evt.clientX){
+        const r = el.getBoundingClientRect();
+        const ripple = document.createElement('span');
+        ripple.className = 'skill-ripple';
+        ripple.style.left = (evt.clientX - r.left) + 'px';
+        ripple.style.top = (evt.clientY - r.top) + 'px';
+        el.appendChild(ripple);
+        setTimeout(()=> ripple.remove(), 600);
+      }
+      const bullets = info.bullets.map(x=>`<li>${x}</li>`).join('');
+      skillPanel.innerHTML = `
+        <div class="space-y-2">
+          <div class="text-sm uppercase tracking-wider" style="color:rgba(97,183,194,.9)">Skill</div>
+          <h4 class="text-xl font-semibold">${name}</h4>
+          <p style="color:var(--text)">${info.blurb}</p>
+          <ul class="list-disc list-inside">${bullets}</ul>
+        </div>`;
+      skillPanel.classList.add('open');
+    };
+    ['skills-grid-langs','skills-grid-tools','skills-grid-domain'].forEach(id=> {
+      const grid = document.getElementById(id);
+      grid.querySelectorAll('.skill-chip').forEach(chip=>{
+        chip.setAttribute('tabindex','0');
+        ['mouseenter','focus','click'].forEach(ev=> chip.addEventListener(ev, (e)=> renderSkill(chip.textContent.trim(), chip, e)));
+      });
+    });
+
+    /* ===== Hobbies video hover ===== */
+    document.querySelectorAll('.hobby-card').forEach(card => {
+      const vid = card.querySelector('.hobby-video');
+      if (!vid) return;
+      let primed = false;
+      const prime = () => { if (!primed) { primed = true; try { vid.load(); } catch{} } };
+      const enter = () => { prime(); card.classList.add('hovering'); vid.muted = true; const p = vid.play(); if (p && p.catch) p.catch(()=>{}); };
+      const leave = () => { card.classList.remove('hovering'); setTimeout(()=>{ try { vid.pause(); vid.currentTime = 0; } catch {} }, 300); };
+      card.addEventListener('mouseenter', enter);
+      card.addEventListener('mouseleave', leave);
+      card.addEventListener('touchstart', () => { enter(); }, {passive:true});
+      document.addEventListener('touchstart', (e) => { if (!card.contains(e.target)) leave(); }, {passive:true});
+    });
+// ===== HERO Particle Theme Helpers =====
+function heroParticleCountFromArea() {
+  const area = window.innerWidth * window.innerHeight;
+  return Math.max(3000, Math.round((area / 100000) * window.particleTheme.countPer100k));
+}
+function heroColorHex() {
+  const dark = document.documentElement.dataset.theme === 'dark';
+  return dark ? 0x9be7f2 : 0x283c46; // same tone as section particles
+}
+
+    /* ===== Three.js hero ===== */
+    let scene, camera, renderer, textMesh, particleMesh, lineMesh;
+    const mouse = new THREE.Vector2();
+    let lastMouseX=0,lastMouseY=0,lastMoveTime=Date.now();
+    let mouseVelocity = new THREE.Vector3();
+    const particleCount = heroParticleCountFromArea();
+
+    const particlePositions = new Float32Array(particleCount*3);
+    const particleVelocities = new Float32Array(particleCount*3);
+    
+    
+// ===== Scroll impulse / inertia =====
+let scrollForce = 0;          // signed impulse; >0 = inward, <0 = outward
+let lastScrollY = window.scrollY || 0;
+const SCROLL_IMPULSE_FACTOR = 0.003; // adjust intensity of per-pixel -> force
+const SCROLL_WHEEL_FACTOR   = 0.004; // wheel delta multiplier (for wheel events)
+const SCROLL_DECAY = 0.8;           // how fast impulse decays (0.9..0.98 typical)
+const SCROLL_FORCE_CLAMP = 8.0;      // clamp to avoid explosions
+let verticalDrift = 0;             // signed: >0 means scrolling down
+const VDRIFT_DECAY = 0.90;         // 0.85–0.95
+const VDRIFT_STRENGTH = 0.12;      // per-frame position offset factor
+
+    const init = () => {
+      const container = document.getElementById('hero');
+      const canvas = document.getElementById('hero-canvas');
+      scene = new THREE.Scene();
+      scene.fog = new THREE.Fog(document.documentElement.dataset.theme === 'dark' ? 0x0f0f10 : 0xf7f7f9, 10, 200);
+      camera = new THREE.PerspectiveCamera(75, container.clientWidth/container.clientHeight, .1, 1000);
+      camera.position.z = 90;
+      renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      // Softer, contrast-friendly lighting
+const amb = new THREE.AmbientLight(0xffffff, 0.35); scene.add(amb);
+const p1 = new THREE.PointLight(0x61b7c2, 1.6, 180); p1.position.set(24, 22, 70); scene.add(p1);
+const p2 = new THREE.PointLight(0xffffff, 1.2, 160); p2.position.set(-26, -18, 60); scene.add(p2);
+
+
+      // Particles
+      const geo = new THREE.BufferGeometry();
+      const colors = new Float32Array(particleCount*3); const c = new THREE.Color();
+      for(let i=0;i<particleCount;i++){
+        const i3=i*3; particlePositions[i3]=(Math.random()-.5)*400; particlePositions[i3+1]=(Math.random()-.5)*400; particlePositions[i3+2]=(Math.random()-.5)*400;
+        particleVelocities[i3]=(Math.random()-.5)*.05; particleVelocities[i3+1]=(Math.random()-.5)*.05; particleVelocities[i3+2]=(Math.random()-.5)*.05;
+        c.setHSL(.52+Math.random()*.18,.8,.55); colors[i3]=c.r; colors[i3+1]=c.g; colors[i3+2]=c.b;
+      }
+      geo.setAttribute('position', new THREE.BufferAttribute(particlePositions,3));
+      geo.setAttribute('color', new THREE.BufferAttribute(colors,3));
+      const mat = new THREE.PointsMaterial({
+  size:1.4,
+  vertexColors:true,
+  blending:THREE.AdditiveBlending,
+  transparent:true,
+  opacity:.85,
+  sizeAttenuation:true,
+  color: heroColorHex()
+});
+
+      particleMesh = new THREE.Points(geo,mat); scene.add(particleMesh);
+
+      // Lines
+      const lineGeo = new THREE.BufferGeometry();
+      const maxLineCount = particleCount*6; const linePositions = new Float32Array(maxLineCount*4*6);
+     const lineMat = new THREE.LineBasicMaterial({ color:0x61b7c2, blending:THREE.AdditiveBlending, transparent:true, opacity:.06 });
+
+      lineGeo.setAttribute('position', new THREE.BufferAttribute(linePositions,3).setUsage(THREE.DynamicDrawUsage));
+      lineMesh = new THREE.LineSegments(lineGeo,lineMat); scene.add(lineMesh);
+
+      // Text
+      const loader = new THREE.FontLoader();
+      loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font)=>{
+        const tg = new THREE.TextGeometry('VEDANT', {
+  font,
+  size: 40, height: 5, curveSegments: 15,
+  bevelEnabled: true, bevelThickness: 2.4, bevelSize: 1.6, bevelOffset: 0, bevelSegments: 6
+});
+tg.center();
+
+const tm = new THREE.MeshPhysicalMaterial({
+  color: 0x9be7f2,
+  emissive: 0x61b7c2,
+  emissiveIntensity: 0.5,
+  metalness: 1.0,
+  roughness: 0.4,
+  clearcoat: 1.0,
+  clearcoatRoughness: 0.8
+});
+
+textMesh = new THREE.Mesh(tg, tm);
+scene.add(textMesh);
+
+// Subtle additive "glow" shell (controlled, not hazy)
+const glowMat = new THREE.MeshBasicMaterial({
+  color: 0x9be7f2,
+  transparent: true,
+  opacity: 1.0,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false
+});
+
+ animate();
+      });
+      window.addEventListener('resize', onResize);
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('scroll', onScrollHero);
+      // wheel events (fast, direction-sensitive)
+      window.addEventListener('wheel', (e) => {
+verticalDrift += Math.sign(e.deltaY) * 1.0;
+
+  // e.deltaY > 0 means scrolling down
+  const w = Math.sign(e.deltaY) * Math.min(200, Math.abs(e.deltaY));
+  scrollForce += w * SCROLL_WHEEL_FACTOR;
+  // clamp
+  scrollForce = Math.max(-SCROLL_FORCE_CLAMP, Math.min(SCROLL_FORCE_CLAMP, scrollForce));
+}, { passive: true });
+    };
+    const onResize = () => {
+      const container = document.getElementById('hero');
+      camera.aspect = container.clientWidth/container.clientHeight; camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    };
+    const onMouseMove = (e) => {
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1; mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      const dx = e.clientX - lastMouseX; const dy = e.clientY - lastMouseY; mouseVelocity.set(dx, -dy, 0).multiplyScalar(.01);
+      lastMouseX = e.clientX; lastMouseY = e.clientY; lastMoveTime = Date.now();
+    };
+    // === Seamless immersive background scroll ===
+let targetZoom = 0, currentZoom = 0;
+const onScrollHero = () => {
+  const y = window.scrollY;
+  const max = document.body.scrollHeight - window.innerHeight;
+  targetZoom = (max > 0) ? (y / max) : 0;
+verticalDrift += Math.sign(dy) * 0.6;
+
+  // derive scroll delta and apply a small impulse (for non-wheel scrolls — keyboard, touch)
+  const dy = y - lastScrollY;
+  if (dy !== 0) {
+    const d = Math.sign(dy) * Math.min(200, Math.abs(dy));
+    scrollForce += d * SCROLL_IMPULSE_FACTOR;
+    scrollForce = Math.max(-SCROLL_FORCE_CLAMP, Math.min(SCROLL_FORCE_CLAMP, scrollForce));
+  }
+  lastScrollY = y;
+};
+
+    const animate = () => {
+        // --- apply scroll-driven radial impulse with inertia ---
+// If scrollForce != 0 we apply a small radial push/pull to each particle
+if (Math.abs(scrollForce) > 1e-5) {
+  // Signed force semantics:
+  //   scrollForce > 0  -> "inward" impulse (particles move TOWARD center)
+  //   scrollForce < 0  -> "outward" impulse (particles move AWAY from center)
+  const fBase = scrollForce * 0.02; // base per-frame strength; tune as needed
+  for (let i = 0; i < particleCount; i++) {
+    const i3 = i * 3;
+    // current position relative to scene center
+    const px = particlePositions[i3], py = particlePositions[i3 + 1], pz = particlePositions[i3 + 2];
+    const dist = Math.sqrt(px*px + py*py + pz*pz) || 1;
+    // normalized radial vector (pointing outward)
+    const nx = px / dist, ny = py / dist, nz = pz / dist;
+
+    // scale impulse so edge particles get stronger push, center particles get softer
+    const edgeScale = Math.min(1.5, (dist / 140) + 0.15);
+
+    // direction: inward => -radial, outward => +radial
+    particleVelocities[i3]     += -nx * fBase * edgeScale;
+    particleVelocities[i3 + 1] += -ny * fBase * edgeScale;
+    particleVelocities[i3 + 2] += -nz * fBase * edgeScale;
+  }
+
+  // decay the scroll force to create inertia / continuation effect
+  scrollForce *= SCROLL_DECAY;
+  // kill tiny residuals to avoid long tails
+  if (Math.abs(scrollForce) < 0.00005) scrollForce = 0;
+}
+
+      requestAnimationFrame(animate);
+        // Smooth zoom transition (breathing effect)
+  currentZoom += (targetZoom - currentZoom) * 0.05;
+// subtle camera nudge from scrollForce (makes the whole scene feel more physical)
+if (typeof scrollForce === 'number' && Math.abs(scrollForce) > 0.001) {
+  // inverse sign so inward scroll pulls camera closer slightly
+  camera.position.z += -scrollForce * 8 * (1 + currentZoom * 0.4);
+}
+
+  // Camera breathing
+  const baseZ = 100;
+  const zoomStrength = 35; // how deep the inhale goes
+  camera.position.z = baseZ - currentZoom * zoomStrength;
+
+  // Text depth breathing
+  if (textMesh) {
+    textMesh.scale.setScalar(1 + currentZoom * 0.25);
+    textMesh.position.z = -currentZoom * 2;
+  }
+
+  // Particle depth breathing
+  if (particleMesh) {
+    const scale = 1 + currentZoom * 0.15;
+    particleMesh.scale.setScalar(scale);
+  }
+
+  // Subtle page breathing for immersion
+ // document.body.style.transform = `scale(${1 + currentZoom * 0.015}) translateY(${currentZoom * -10}px)`;
+  //document.body.style.transformOrigin = 'center top';
+
+      const still = (Date.now()-lastMoveTime)>100; const mouse3D = new THREE.Vector3(mouse.x*100, mouse.y*100, 0);
+      for(let i=0;i<particleCount;i++){
+        const i3=i*3; const dx = particlePositions[i3]-mouse3D.x;
+        const dy = particlePositions[i3+1]-mouse3D.y;
+        const dz = particlePositions[i3+2]-mouse3D.z;
+        let velx = particleVelocities[i3], vely = particleVelocities[i3+1], velz = particleVelocities[i3+2];
+        if(!still){ const dist = Math.sqrt(dx*dx+dy*dy+dz*dz) || 1; const force = Math.min(1/(dist*dist), .5); velx += (dx/dist)*force; vely += (dy/dist)*force; velz += (dz/dist)*force; }
+        velx *= .985; vely *= .985; velz *= .985;
+        let px = particlePositions[i3] + velx, py = particlePositions[i3+1] + vely, pz = particlePositions[i3+2] + velz;
+        if (px>200||px<-200) velx*=-1; if (py>200||py<-200) vely*=-1; if (pz>200||pz<-200) velz*=-1;
+        particlePositions[i3]=px; particlePositions[i3+1]=py; particlePositions[i3+2]=pz; particleVelocities[i3]=velx; particleVelocities[i3+1]=vely; particleVelocities[i3+2]=velz;
+      }
+      particleMesh.geometry.attributes.position.needsUpdate = true;
+
+      let idx=0; const lp = lineMesh.geometry.attributes.position.array; const maxDist=36;
+      for(let i=0;i<particleCount;i++){
+        for(let j=i+1;j<particleCount;j++){
+          const dx = particlePositions[i*3]-particlePositions[j*3];
+          const dy = particlePositions[i*3+1]-particlePositions[j*3+1];
+          const dz = particlePositions[i*3+2]-particlePositions[j*3+2];
+          const d = Math.sqrt(dx*dx+dy*dy+dz*dz);
+          if (d<maxDist){
+            lp[idx++] = particlePositions[i*3]; lp[idx++] = particlePositions[i*3+1]; lp[idx++] = particlePositions[i*3+2];
+            lp[idx++] = particlePositions[j*3]; lp[idx++] = particlePositions[j*3+1]; lp[idx++] = particlePositions[j*3+2];
+          }
+          if (idx>=lp.length) break;
+        }
+        if (idx>=lp.length) break;
+      }
+      for(let k=idx;k<lp.length;k++){ lp[k]=0; }
+      lineMesh.geometry.attributes.position.needsUpdate = true; lineMesh.geometry.setDrawRange(0, idx);
+
+      if (textMesh){ textMesh.rotation.x += ((mouse.y*.5) - textMesh.rotation.x)*.05; textMesh.rotation.y += ((mouse.x*.5) - textMesh.rotation.y)*.05; }
+      renderer.render(scene,camera);
+    };
+    
+    init();
+window.addEventListener('scroll', onScrollHero);
+
+    // Ensure toggle reflects stored theme at load
+    themeToggle.setAttribute('aria-pressed', document.documentElement.dataset.theme === 'dark' ? 'true' : 'false');
+  });
+  </script>
+<script>
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('main-nav');
+  if (window.scrollY > 50) {
+    nav.classList.add('nav-scrolled');
+  } else {
+    nav.classList.remove('nav-scrolled');
+  }
+});
+</script>
+
+<script>
+(function() {
+  // Setup
+  const nav = document.querySelector('.side-nav');
+  const items = Array.from(document.querySelectorAll('.side-nav .nav-item'));
+  const indicator = document.querySelector('.side-nav .indicator');
+
+  // Map target IDs from buttons
+  const sectionIds = items.map(btn => btn.getAttribute('data-target'));
+  const sections = sectionIds
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+
+  // Click -> smooth scroll
+  items.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-target');
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // Center-based active detection for reliability
+  let lastActive = null;
+  let lastY = window.scrollY;
+  let ticking = false;
+
+  function updateActive() {
+    const vh = window.innerHeight;
+    const center = vh * 0.5;
+    let best = { id: null, dist: Infinity, idx: -1 };
+
+    sections.forEach((sec, i) => {
+      const rect = sec.getBoundingClientRect();
+      const secCenter = rect.top + rect.height * 0.5;
+      const dist = Math.abs(secCenter - center);
+      if (dist < best.dist) best = { id: sec.id, dist, idx: i };
+    });
+
+    if (best.id && best.id !== lastActive) {
+      // Update active state
+      items.forEach(i => i.classList.remove('active', 'spin'));
+      const btn = items[best.idx];
+      if (btn) {
+        btn.classList.add('active');
+        // trigger spin
+        void btn.offsetWidth;
+        btn.classList.add('spin');
+        lastActive = best.id;
+
+        // Move indicator next to active item
+        const r = btn.getBoundingClientRect();
+        const navR = nav.getBoundingClientRect();
+        const offsetY = r.top - navR.top + (r.height - 36) / 2; // center indicator
+        indicator.style.height = `${Math.max(30, Math.min(40, r.height - 6))}px`;
+        indicator.style.transform = `translateY(${offsetY}px)`;
+      }
+    }
+
+    // Morphing based on scroll direction
+    const nowY = window.scrollY;
+    const dir = nowY > lastY ? 'down' : 'up';
+    nav.classList.toggle('morph-down', dir === 'down');
+    nav.classList.toggle('morph-up', dir === 'up');
+    lastY = nowY;
+    ticking = false;
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      window.requestAnimationFrame(updateActive);
+      ticking = true;
+    }
+  }
+
+  // Also run on resize/load
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  window.addEventListener('load', () => { onScroll(); });
+
+  // Cursor-follow glow (keep)
+  const glow = document.getElementById('cursor-glow');
+  let raf = null;
+  let mx = 0, my = 0, tx = 0, ty = 0;
+
+  function animate() {
+    tx += (mx - tx) * 0.18;
+    ty += (my - ty) * 0.18;
+    glow.style.transform = `translate(${tx}px, ${ty}px)`;
+    raf = requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('mousemove', (e) => {
+    mx = e.clientX; my = e.clientY;
+    if (!raf) raf = requestAnimationFrame(animate);
+  });
+  window.addEventListener('mouseleave', () => {
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
+  });
+
+  // Initial position for indicator based on first active
+  onScroll();
+})();
+</script>
+
+<script>
+(function () {
+  // -------- Settings you can tweak per section ----------
+const sectionsToEnhance = [
+  { sel: '#about',    count: 150, speed: 0.22, hoverPull: 55, parallax: 0.9},
+  { sel: '#projects', count: 150, speed: 0.23, hoverPull: 58, parallax: 0.06 },
+  { sel: '#skills',   count: 150, speed: 0.22, hoverPull: 55, parallax: 0.07 },
+  { sel: '#hobbies',  count: 150, speed: 0.21, hoverPull: 50, parallax: 0.09 },
+  { sel: '#resume',   count: 150, speed: 0.20, hoverPull: 48, parallax: 0.09 },
+  { sel: '#contact',  count: 150, speed: 0.22, hoverPull: 55, parallax: 0.07 },
+];
+
+  // Particle color adapts to theme; feel free to adjust
+  const getStroke = () => {
+    const dark = document.documentElement.dataset.theme === 'dark';
+    return dark ? 'rgba(155,231,242,0.45)' : 'rgba(40,60,70,0.35)';
+  };
+
+  function addParticlesToSection(section, opts) {
+let scrollDrift = 0;          // signed: >0 = downwards scroll
+const DRIFT_DECAY = 0.9;      // how quickly drift fades each frame (0.85–0.95 is good)
+const DRIFT_STRENGTH = 0.15;  // how strongly scroll affects particle motion
+
+    // 1) Build the overlay container + canvas (using your existing CSS)
+    const host = document.createElement('div');
+    host.className = 'section-particles';
+    const wrap = document.createElement('div');
+    wrap.className = 'section-particles-wrap';
+    const canvas = document.createElement('canvas');
+    canvas.className = 'section-particles-canvas';
+    wrap.appendChild(canvas);
+    host.appendChild(wrap);
+    section.style.position = section.style.position || 'relative';
+    section.prepend(host); // put behind section content
+
+    const ctx = canvas.getContext('2d', { alpha: true });
+    let W = 0, H = 0, raf = null, running = false;
+
+    const mouse = { x: 0, y: 0, has: false };
+    const particles = [];
+    const density = opts.count || 60;
+    const baseSpeed = opts.speed || 0.22;
+    const hoverPull = opts.hoverPull || 60;   // attraction strength
+    const parallax = opts.parallax || 0.06;   // gentle drift with mouse
+
+ function resize() {
+  const rect = section.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = Math.max(1, rect.width);
+  H = Math.max(1, rect.height);
+  canvas.width  = Math.floor(W * dpr);
+  canvas.height = Math.floor(H * dpr);
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  particles.length = 0;
+  for (let i = 0; i < density; i++) {
+    particles.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * baseSpeed,
+      vy: (Math.random() - 0.5) * baseSpeed,
+      r: 1 + Math.random() * 1.8
+    });
+  }
+}
+
+
+    function step() {
+      if (!running) return;
+      const stroke = getStroke();
+      ctx.clearRect(0, 0, W, H);
+
+      // parallax drift: particles slide slightly toward mouse position
+      const px = mouse.has ? (mouse.x - W / 2) * parallax : 0;
+      const py = mouse.has ? (mouse.y - H / 2) * parallax : 0;
+
+      // update
+      for (let p of particles) {
+        // attraction/repulsion toward pointer
+if (mouse.has) {
+  const dx = mouse.x - p.x;
+  const dy = mouse.y - p.y;
+  const d2 = dx*dx + dy*dy || 1;
+  const d  = Math.sqrt(d2);
+
+  // Inverse-square "gravity" toward the cursor, softly clamped
+  const g = Math.min((hoverPull * 120) / d2, 1.0); // stronger & capped
+
+  // Attraction
+  p.vx += (dx / d) * g * 0.06;
+  p.vy += (dy / d) * g * 0.06;
+
+  // Tiny tangential swirl for liveliness
+  const swirl = Math.min(0.12, 18 / d2);
+  p.vx += -dy / d * swirl;
+  p.vy +=  dx / d * swirl;
+}
+
+
+        p.x += p.vx + px * 0.003;
+        p.y += p.vy + py * 0.003;
+
+        // wrap around edges for continuity
+        if (p.x < -5) p.x = W + 5;
+        if (p.x > W + 5) p.x = -5;
+        if (p.y < -5) p.y = H + 5;
+        if (p.y > H + 5) p.y = -5;
+      }
+
+      // draw: dots + soft lines between nearby points
+      ctx.lineWidth = 1;
+      for (let i = 0; i < particles.length; i++) {
+        const a = particles[i];
+        // dot
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
+        ctx.fillStyle = stroke;
+        ctx.fill();
+
+        // connect to a few neighbors
+        for (let j = i + 1; j < i + 12 && j < particles.length; j++) {
+          const b = particles[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const d2 = dx*dx + dy*dy;
+          const maxDist = 90; // link distance
+          if (d2 < maxDist * maxDist) {
+            const alpha = 1 - Math.sqrt(d2) / maxDist;
+            ctx.strokeStyle = stroke.replace(/[\d.]+\)$/,'') + (alpha * 0.8).toFixed(3) + ')';
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      raf = requestAnimationFrame(step);
+    }
+
+    function start() {
+      if (running) return;
+      running = true;
+      // ensure correct size on start
+      resize();
+      step();
+      host.classList.add('visible'); // you already have fade-in CSS for this class
+    }
+
+    function stop() {
+      running = false;
+      if (raf) cancelAnimationFrame(raf);
+      raf = null;
+      host.classList.remove('visible');
+    }
+
+// Events — listen on the SECTION instead of the canvas
+const onMouseMove = (e) => {
+  const rect = section.getBoundingClientRect();
+  mouse.x = e.clientX - rect.left;
+  mouse.y = e.clientY - rect.top;
+  mouse.has = true;
+};
+const onMouseLeave = () => (mouse.has = false);
+
+section.addEventListener('mousemove', onMouseMove, { passive: true });
+// Scroll → update drift; down scroll => positive delta => drift up (we invert later)
+let lastScrollY_local = window.scrollY || 0;
+section.addEventListener('wheel', (e) => {
+  // e.deltaY > 0 (scroll down) => drift should move particles up
+  scrollDrift += Math.sign(e.deltaY) * 1.0;
+}, { passive: true });
+
+window.addEventListener('scroll', () => {
+  const y = window.scrollY || 0;
+  const dy = y - lastScrollY_local;
+  scrollDrift += Math.sign(dy) * 0.6;
+  lastScrollY_local = y;
+}, { passive: true });
+
+section.addEventListener('mouseleave', onMouseLeave);
+
+    window.addEventListener('resize', resize);
+
+    // Observe section visibility to save CPU
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    const t = entry.intersectionRatio;                   // 0 → 1
+    const eased = t * t * (3 - 2 * t);                   // smoothstep
+    host.style.opacity = (0.05 + 0.95 * eased).toFixed(3);
+
+    // Start animation when barely visible; stop when fully gone
+    if (t > 0.06 && !running) start();
+    if (t < 0.02 && running)  stop();
+  });
+}, { threshold: [0, 0.06, 0.15, 0.35, 0.65, 1] });
+io.observe(section);
+
+
+    // Also react to theme changes (if you toggle)
+    const onTheme = () => { /* redraw next frame uses new color automatically */ };
+    window.addEventListener('storage', onTheme); // in case theme is persisted elsewhere
+
+    // expose a tiny handle (not strictly needed)
+    return { start, stop, resize, destroy() {
+      stop();
+      io.disconnect();
+      window.removeEventListener('resize', resize);
+      canvas.removeEventListener('mousemove', onMouseMove);
+      canvas.removeEventListener('mouseleave', onMouseLeave);
+      host.remove();
+    }};
+  }
+
+  // Boot for all target sections that exist
+  sectionsToEnhance.forEach(cfg => {
+    const section = document.querySelector(cfg.sel);
+    if (section) addParticlesToSection(section, cfg);
+  });
+})();
+</script>
+<script>
+/* ===== Section Particles: unified look & “mouse gravity” ===== */
+(function () {
+  const sectionsToEnhance = [
+    { sel: '#about'    },
+    { sel: '#projects' },
+    { sel: '#skills'   },
+    { sel: '#hobbies'  },
+    { sel: '#resume'   },
+    { sel: '#contact'  },
+  ];
+
+  function getStroke() {
+    const dark = document.documentElement.dataset.theme === 'dark';
+    return dark ? window.particleTheme.colorDark : window.particleTheme.colorLight;
+  }
+
+  function addParticlesToSection(section) {
+    // 1) Overlay container + canvas (uses your existing CSS classes)
+    const host = document.createElement('div');
+    host.className = 'section-particles';
+    const wrap = document.createElement('div');
+    wrap.className = 'section-particles-wrap';
+    const canvas = document.createElement('canvas');
+    canvas.className = 'section-particles-canvas';
+    wrap.appendChild(canvas);
+    host.appendChild(wrap);
+    section.style.position = section.style.position || 'relative';
+    section.prepend(host);
+
+    const ctx = canvas.getContext('2d', { alpha: true });
+    let W = 0, H = 0, raf = null, running = false;
+
+    const mouse = { x: 0, y: 0, has: false };
+    const particles = [];
+
+    const linkMaxDist = window.particleTheme.linkMaxDist;
+    const baseSpeed   = window.particleTheme.baseSpeed;
+
+    function densityFromArea() {
+      const rect = section.getBoundingClientRect();
+      const area = Math.max(1, rect.width * rect.height);
+      return Math.max(20, Math.round((area / 100000) * window.particleTheme.countPer100k));
+    }
+
+    function resize() {
+      const rect = section.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = Math.max(1, rect.width);
+      H = Math.max(1, rect.height);
+      canvas.width  = Math.floor(W * dpr);
+      canvas.height = Math.floor(H * dpr);
+      canvas.style.width = W + 'px';
+      canvas.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const density = densityFromArea();
+      particles.length = 0;
+      for (let i = 0; i < density; i++) {
+        particles.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: (Math.random() - 0.5) * baseSpeed,
+          vy: (Math.random() - 0.5) * baseSpeed,
+          r: window.particleTheme.dotMin +
+             Math.random() * (window.particleTheme.dotMax - window.particleTheme.dotMin)
+        });
+      }
+    }
+
+    function step() {
+      if (!running) return;
+      const stroke = getStroke();
+      ctx.clearRect(0, 0, W, H);
+
+      // Update particles with “inverse-square gravity” + swirl
+      for (let p of particles) {
+        if (mouse.has) {
+          const dx = mouse.x - p.x;
+          const dy = mouse.y - p.y;
+          const d2 = dx*dx + dy*dy || 1;
+          const d  = Math.sqrt(d2);
+
+// Softer gravity (reduced gain + lower cap)
+const g = Math.min((hoverPull * 60) / d2, 0.45);
+// Attraction
+p.vx += (dx / d) * g * 0.045;
+p.vy += (dy / d) * g * 0.045;
+
+
+          const swirl = Math.min(0.12, window.particleTheme.swirl / d2);
+          p.vx += -dy / d * swirl;
+          p.vy +=  dx / d * swirl;
+        }
+
+        p.x += p.vx;
+        p.y += p.vy;
+// Apply scroll drift (invert to move opposite scroll direction)
+p.y -= scrollDrift * DRIFT_STRENGTH;
+
+// Decay drift each frame
+scrollDrift *= DRIFT_DECAY;
+p.x += p.vx + px * 0.003;
+p.y += p.vy + py * 0.003;
+
+        // wrap
+        if (p.x < -5) p.x = W + 5;
+        if (p.x > W + 5) p.x = -5;
+        if (p.y < -5) p.y = H + 5;
+        if (p.y > H + 5) p.y = -5;
+      }
+
+      // Draw dots + links
+      ctx.lineWidth = 1;
+      for (let i = 0; i < particles.length; i++) {
+        const a = particles[i];
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
+        ctx.fillStyle = stroke;
+        ctx.fill();
+
+        for (let j = i + 1; j < i + 12 && j < particles.length; j++) {
+          const b = particles[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const d2 = dx*dx + dy*dy;
+          if (d2 < linkMaxDist * linkMaxDist) {
+            const alpha = 1 - Math.sqrt(d2) / linkMaxDist;
+            ctx.strokeStyle = stroke.replace(/[\d.]+\)$/,'') + (alpha * 0.8).toFixed(3) + ')';
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      raf = requestAnimationFrame(step);
+    }
+
+    function start() {
+      if (running) return;
+      running = true;
+      resize();
+      step();
+      host.classList.add('visible'); // your CSS fades this in
+    }
+
+    function stop() {
+      running = false;
+      if (raf) cancelAnimationFrame(raf);
+      raf = null;
+      host.classList.remove('visible');
+    }
+
+    // Events — listen on SECTION (overlay is pointer-events:none)
+    function onMouseMove(e) {
+      const rect = section.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.has = true;
+    }
+    function onMouseLeave() { mouse.has = false; }
+
+    section.addEventListener('mousemove', onMouseMove, { passive: true });
+    section.addEventListener('mouseleave', onMouseLeave);
+    window.addEventListener('resize', resize);
+
+    // Pause when not on screen
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.15) start();
+        else stop();
+      });
+    }, { threshold: [0, 0.15, 0.5, 1] });
+    io.observe(section);
+
+    return { destroy() {
+      stop(); io.disconnect();
+      window.removeEventListener('resize', resize);
+      section.removeEventListener('mousemove', onMouseMove);
+      section.removeEventListener('mouseleave', onMouseLeave);
+      host.remove();
+    }};
+  }
+
+  sectionsToEnhance.forEach(cfg => {
+    const section = document.querySelector(cfg.sel);
+    if (section) addParticlesToSection(section);
+  });
+})();
+</script>
+<script>
+/* ===== Crossfade HERO particles with first section ===== */
+(function(){
+  const hero = document.getElementById('hero');
+  const heroCanvas = document.getElementById('hero-canvas'); // already fixed-position in your CSS
+  if (!hero || !heroCanvas) return;
+
+  function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+  function updateHandoff(){
+    const hb = hero.getBoundingClientRect().bottom;
+    const band = 160; // fade band size
+
+    const heroOpacity = clamp((hb - 0) / band, 0.2, 1);  // never fully hide
+    heroCanvas.style.opacity = heroOpacity.toFixed(3);
+
+    const firstSection = document.querySelector('#about .section-particles') ||
+                         document.querySelector('#projects .section-particles');
+    if (firstSection) {
+      const secOpacity = clamp(1 - heroOpacity, 0, 1);
+      firstSection.style.opacity = (0.15 + secOpacity * 0.85).toFixed(3);
+    }
+  }
+
+  window.addEventListener('scroll', updateHandoff, { passive: true });
+  window.addEventListener('resize', updateHandoff);
+  window.addEventListener('load', updateHandoff);
+  updateHandoff();
+})();
+</script>
+<script>
+(function () {
+  const form = document.getElementById('contact-form');
+  const status = document.getElementById('form-status');
+  if (!form) return;
+
+  const setStatus = (msg, ok) => {
+    if (!status) return;
+    status.textContent = msg || '';
+    status.className = 'text-sm text-center ' + (ok ? 'text-teal-300' : 'text-red-400');
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('button[type="submit"]');
+    const prev = btn ? btn.innerHTML : '';
+    if (btn) { btn.disabled = true; btn.innerHTML = 'Sending…'; }
+
+    try {
+      const res = await fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        setStatus('Thanks! Your message has been sent.', true);
+        form.reset();
+      } else {
+        setStatus('Oops—something went wrong. Please try again.', false);
+      }
+    } catch {
+      setStatus('Network error. Please try again later.', false);
+    } finally {
+      if (btn) { btn.disabled = false; btn.innerHTML = prev; }
+    }
+  });
+})();
+</script>
+
+
+
+<script>
+(function() {
+  // Setup
+  const nav = document.querySelector('.side-nav');
+  const items = Array.from(document.querySelectorAll('.side-nav .nav-item'));
+  const indicator = document.querySelector('.side-nav .indicator');
+
+  // Map target IDs from buttons
+  const sectionIds = items.map(btn => btn.getAttribute('data-target'));
+  const sections = sectionIds
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+
+  // Click -> smooth scroll
+  items.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-target');
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // Center-based active detection for reliability
+  let lastActive = null;
+  let lastY = window.scrollY;
+  let ticking = false;
+
+  function updateActive() {
+    const vh = window.innerHeight;
+    const center = vh * 0.5;
+    let best = { id: null, dist: Infinity, idx: -1 };
+
+    sections.forEach((sec, i) => {
+      const rect = sec.getBoundingClientRect();
+      const secCenter = rect.top + rect.height * 0.5;
+      const dist = Math.abs(secCenter - center);
+      if (dist < best.dist) best = { id: sec.id, dist, idx: i };
+    });
+
+    if (best.id && best.id !== lastActive) {
+      // Update active state
+      items.forEach(i => i.classList.remove('active', 'spin'));
+      const btn = items[best.idx];
+      if (btn) {
+        btn.classList.add('active');
+        // trigger spin
+        void btn.offsetWidth;
+        btn.classList.add('spin');
+        lastActive = best.id;
+
+        // Move indicator next to active item
+        const r = btn.getBoundingClientRect();
+        const navR = nav.getBoundingClientRect();
+        const offsetY = r.top - navR.top + (r.height - 36) / 2; // center indicator
+        indicator.style.height = `${Math.max(30, Math.min(40, r.height - 6))}px`;
+        indicator.style.transform = `translateY(${offsetY}px)`;
+      }
+    }
+
+    // Morphing based on scroll direction
+    const nowY = window.scrollY;
+    const dir = nowY > lastY ? 'down' : 'up';
+    nav.classList.toggle('morph-down', dir === 'down');
+    nav.classList.toggle('morph-up', dir === 'up');
+    lastY = nowY;
+    ticking = false;
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      window.requestAnimationFrame(updateActive);
+      ticking = true;
+    }
+  }
+
+  // Also run on resize/load
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  window.addEventListener('load', () => { onScroll(); });
+
+  // Cursor-follow glow (keep)
+  const glow = document.getElementById('cursor-glow');
+  let raf = null;
+  let mx = 0, my = 0, tx = 0, ty = 0;
+
+  function animate() {
+    tx += (mx - tx) * 0.18;
+    ty += (my - ty) * 0.18;
+    glow.style.transform = `translate(${tx}px, ${ty}px)`;
+    raf = requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('mousemove', (e) => {
+    mx = e.clientX; my = e.clientY;
+    if (!raf) raf = requestAnimationFrame(animate);
+  });
+  window.addEventListener('mouseleave', () => {
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
+  });
+
+  // Initial position for indicator based on first active
+  onScroll();
+})();
+</script>
+
+
+
+
+
+
+<!-- Stage 2: WebGL Reveal Shaders -->
+<script src="https://unpkg.com/three@0.161.0/build/three.min.js"></script>
+<script id="vertexShader" type="x-shader/x-vertex">
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+</script>
+
+<script id="fragmentShader" type="x-shader/x-fragment">
+uniform float u_time;
+uniform float u_scroll;
+uniform float u_intensity;
+uniform vec3 u_colorA;
+uniform vec3 u_colorB;
+varying vec2 vUv;
+
+float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
+float noise(vec2 p){
+  vec2 i = floor(p), f = fract(p);
+  vec2 u = f*f*(3.0 - 2.0*f);
+  return mix(mix(hash(i), hash(i+vec2(1.0,0.0)), u.x),
+             mix(hash(i+vec2(0.0,1.0)), hash(i+vec2(1.0,1.0)), u.x), u.y);
+}
+
+void main() {
+  float n = noise(vUv * 3.0 + vec2(u_time*0.1, u_scroll*1.5));
+  float ripple = sin((vUv.y + u_scroll) * 20.0) * 0.03 * u_intensity;
+  float mixval = smoothstep(0.3, 0.7, n + ripple);
+  vec3 color = mix(u_colorA, u_colorB, mixval);
+  gl_FragColor = vec4(color, 1.0);
+}
+</script>
+
+<script>
+(function(){
+  const canvas = document.getElementById('atfx-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  const geometry = new THREE.PlaneGeometry(2, 2);
+
+  const material = new THREE.ShaderMaterial({
+    uniforms: {
+      u_time: { value: 0.0 },
+      u_scroll: { value: 0.0 },
+      u_intensity: { value: 0.5 },
+      u_colorA: { value: new THREE.Color(0x74d0e4) },
+      u_colorB: { value: new THREE.Color(0x0e1b22) }
+    },
+    vertexShader: document.getElementById('vertexShader').textContent,
+    fragmentShader: document.getElementById('fragmentShader').textContent
+  });
+
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
+
+  function resize() {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+  window.addEventListener('resize', resize);
+
+  // Scene palette logic from Stage 1
+  const SCENES = [
+    { id: 'about',    colorA: '#74d0e4', colorB: '#0e1b22', intensity: 0.28 },
+    { id: 'projects', colorA: '#58c3ff', colorB: '#0c1a24', intensity: 0.75 },
+    { id: 'skills',   colorA: '#9e6fff', colorB: '#161329', intensity: 0.60 },
+    { id: 'hobbies',  colorA: '#c8ff7a', colorB: '#132016', intensity: 0.82 },
+    { id: 'resume',   colorA: '#b7c2cc', colorB: '#0e1216', intensity: 0.36 },
+    { id: 'contact',  colorA: '#ffb86b', colorB: '#1a1106', intensity: 0.32 }
+  ];
+  const sceneSections = SCENES.map(s => document.getElementById(s.id)).filter(Boolean);
+
+  function hexToRgb(hex){
+    const c = hex.replace('#','');
+    const bigint = parseInt(c,16);
+    return [(bigint>>16&255)/255, (bigint>>8&255)/255, (bigint&255)/255];
+  }
+
+  const lerp = (a,b,t)=>a+(b-a)*t;
+  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+
+  function getSceneProgress(){
+    const center = window.innerHeight * 0.5;
+    let idx = 0, minDist = Infinity;
+    for (let i=0;i<sceneSections.length;i++){
+      const r = sceneSections[i].getBoundingClientRect();
+      const c = r.top + r.height*0.5;
+      const d = Math.abs(c - center);
+      if (d < minDist){ minDist = d; idx = i; }
+    }
+    let t = 0;
+    const cur = sceneSections[idx].getBoundingClientRect();
+    const next = sceneSections[Math.min(idx+1, sceneSections.length-1)].getBoundingClientRect();
+    const curC = cur.top + cur.height*0.5;
+    const nextC = next.top + next.height*0.5;
+    if (idx < sceneSections.length-1){
+      const denom = Math.max(1, Math.abs(nextC - curC));
+      t = clamp((center - curC) / denom, 0, 1);
+    }
+    return { idx, t };
+  }
+
+  let scrollY = window.scrollY;
+  let lastY = scrollY;
+  let velocity = 0;
+  let progress = 0;
+
+  function updateScroll(){
+    const y = window.scrollY;
+    const dy = y - lastY;
+    velocity = lerp(velocity, dy, 0.15);
+    lastY = y;
+    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    progress = clamp(y / maxScroll, 0, 1);
+  }
+
+  function animate(time){
+    requestAnimationFrame(animate);
+    updateScroll();
+    const { idx, t } = getSceneProgress();
+    const A = SCENES[idx];
+    const B = SCENES[Math.min(idx+1, SCENES.length-1)];
+
+    const aA = hexToRgb(A.colorA), aB = hexToRgb(B.colorA);
+    const bA = hexToRgb(A.colorB), bB = hexToRgb(B.colorB);
+
+    const colorA = new THREE.Color(lerp(aA[0],aB[0],t), lerp(aA[1],aB[1],t), lerp(aA[2],aB[2],t));
+    const colorB = new THREE.Color(lerp(bA[0],bB[0],t), lerp(bA[1],bB[1],t), lerp(bA[2],bB[2],t));
+    const intensity = lerp(A.intensity, B.intensity, t);
+
+    material.uniforms.u_colorA.value.copy(colorA);
+    material.uniforms.u_colorB.value.copy(colorB);
+    material.uniforms.u_intensity.value = intensity;
+    material.uniforms.u_scroll.value = progress;
+    material.uniforms.u_time.value = time * 0.001;
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+</script>
+
+
+<script>
+/* === Injected: Nav morph, section observer, active link syncing (top + side) === */
+(function() {
+  const mainNav = document.getElementById('main-nav');
+  const topLinks = Array.from(document.querySelectorAll('#main-nav .nav-link'));
+  const sideNav = document.querySelector('.side-nav');
+  const sideItems = sideNav ? Array.from(sideNav.querySelectorAll('.nav-item')) : [];
+  const indicator = sideNav ? sideNav.querySelector('.indicator') : null;
+
+  const idFromHref = (a) => (a.getAttribute('href') || '').replace('#', '');
+  const linkById = Object.fromEntries(topLinks.map(a => [idFromHref(a), a]));
+  const sideById = Object.fromEntries(sideItems.map(btn => [btn.dataset.target, btn]));
+
+  // Scroll direction + solid background logic
+  let lastY = window.scrollY || window.pageYOffset;
+  const hero = document.getElementById('hero');
+  const heroBottom = () => (hero ? hero.getBoundingClientRect().bottom + window.scrollY : 0);
+
+  const onScroll = () => {
+    const y = window.scrollY || window.pageYOffset;
+    const goingDown = y > lastY + 2;
+    const pastHero = y > Math.max(48, heroBottom() - 72);
+
+    // solid background once past hero
+    mainNav.classList.toggle('nav-solid', pastHero);
+
+    // subtle morph based on direction
+    mainNav.classList.toggle('nav-morph-down', goingDown && pastHero);
+    mainNav.classList.toggle('nav-morph-up', !goingDown || !pastHero);
+
+    lastY = y;
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Smooth-scroll for top nav anchors (keep existing behavior graceful)
+  topLinks.forEach(a => {
+    a.addEventListener('click', (e) => {
+      const id = idFromHref(a);
+      const target = document.getElementById(id);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+  // Smooth-scroll for side nav buttons
+  sideItems.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // IntersectionObserver to highlight active section
+  const sections = ['about','projects','skills','hobbies','resume','contact']
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+
+  const setActive = (id) => {
+    // top
+    topLinks.forEach(a => a.classList.toggle('active', idFromHref(a) === id));
+    // side
+    sideItems.forEach(btn => btn.classList.toggle('active', btn.dataset.target === id));
+    // side indicator movement
+    if (indicator && sideById[id]) {
+      const el = sideById[id];
+      const rect = el.getBoundingClientRect();
+      const sideRect = sideNav.getBoundingClientRect();
+      const offset = rect.top - sideRect.top + (rect.height - 36) / 2; // 36 is indicator base height
+      indicator.style.transform = `translateY(${offset}px)`;
+      indicator.style.height = `${Math.max(28, rect.height - 6)}px`;
+      // cute spin
+      el.classList.add('spin');
+      setTimeout(() => el.classList.remove('spin'), 800);
+    }
+  };
+
+  const io = new IntersectionObserver((entries) => {
+    // choose the most visible entry
+    let best = null;
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      if (!best || e.intersectionRatio > best.intersectionRatio) best = e;
+    }
+    if (best) {
+      setActive(best.target.id);
+    }
+  }, { root: null, threshold: [0.25, 0.5, 0.75], rootMargin: '0px 0px -30% 0px' });
+
+  sections.forEach(sec => io.observe(sec));
+
+  // Initial highlight based on hash/location
+  const initial = (location.hash || '#about').replace('#', '');
+  if (sections.some(s => s.id === initial)) setActive(initial);
+})();
+
+</script>
+
+<script>
+/* === Injected: Skills hover box for all categories === */
+(function() {
+  const skillsRoot = document.getElementById('skills');
+  if (!skillsRoot) return;
+
+  // Single floating box reused for all items
+  let hoverBox = document.getElementById('skill-hover-box');
+  if (!hoverBox) {
+    hoverBox = document.createElement('div');
+    hoverBox.id = 'skill-hover-box';
+    document.body.appendChild(hoverBox);
+  }
+
+  // A broad selector that should match skills across categories:
+  const skillSelector = [
+    '#skills li',              // list items
+    '#skills .skill',          // explicit skill class if exists
+    '#skills .chip',           // chip/pill style
+    '#skills .tag',
+    '#skills .badge',
+    '#skills .pill',
+    '#skills .skill-item',
+    '#skills .skill-chip',
+    '#skills .skill-tag',
+    '#skills [data-skill]'     // explicit data attribute
+  ].join(',');
+
+  // Helper to determine if an element is a "skill" (avoid entire row containers)
+  const isSkillElement = (el) => {
+    if (!el) return false;
+    // Avoid parents like containers/rows
+    const skip = /(row|grid|group|list|wrapper|container)/i.test(el.className || '');
+    return !skip && el.matches && el.matches(skillSelector);
+  };
+
+  let current = null;
+
+  const showBox = (el, e) => {
+    current = el;
+    el.classList.add('is-skill-hovered');
+    const tip = el.getAttribute('data-tip') || el.getAttribute('data-skill') || el.getAttribute('title') || el.textContent.trim();
+    hoverBox.textContent = tip;
+    positionBox(e);
+    hoverBox.classList.add('show');
+  };
+
+  const hideBox = () => {
+    if (current) current.classList.remove('is-skill-hovered');
+    current = null;
+    hoverBox.classList.remove('show');
+  };
+
+  const positionBox = (e) => {
+    const x = e.clientX;
+    const y = e.clientY;
+    hoverBox.style.left = x + 'px';
+    hoverBox.style.top = y + 'px';
+  };
+
+  // Delegate events within #skills so it works for all rows/categories
+  skillsRoot.addEventListener('mousemove', (e) => {
+    const el = e.target.closest(skillSelector);
+    if (el !== current) {
+      if (current) hideBox();
+      if (isSkillElement(el)) showBox(el, e);
+      return;
+    }
+    if (current) positionBox(e);
+  });
+
+  skillsRoot.addEventListener('mouseleave', hideBox);
+})();
+
+</script>
+
+<script>
+/* === v9 Injected: Slingshot side-nav + speed train top-nav === */
+(function() {
+  const side = document.querySelector('.side-nav');
+  const topbar = document.getElementById('main-nav');
+
+  // --- SLINGSHOT for side-nav ---
+  if (side) {
+    let lastY = window.scrollY;
+    let velocity = 0;
+    let bend = 0;           // rotateX in deg
+    let skew = 0;           // skewY in deg
+    let vy = 0;             // angular velocity
+    let floatY = 0, floatX = 0; // drift offsets
+    let pulling = false;
+    let dir = 0;
+
+    // Tuned for a strong, elastic recoil feeling
+    const K_PULL = 0.42;
+    const SPRING_K = 0.085;
+    const DAMPING = 0.06;
+    const DRIFT_SENS = 0.42;
+    const MAX_BEND = 18;
+    const MAX_SKEW = 7;
+
+    const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+
+    const updateTransform = () => {
+      side.style.setProperty('--bend', bend.toFixed(2)+'deg');
+      side.style.setProperty('--skew', skew.toFixed(2)+'deg');
+      side.style.setProperty('--floatY', floatY.toFixed(2)+'px');
+      side.style.setProperty('--floatX', floatX.toFixed(2)+'px');
+    };
+
+    const setDirClass = (d) => {
+      side.classList.toggle('bending-down', d < 0);
+      side.classList.toggle('bending-up', d > 0);
+      side.classList.toggle('pull-top', d < 0);
+      side.classList.toggle('pull-bottom', d > 0);
+    };
+
+    let raf;
+    const tick = () => {
+      // spring simulation (release)
+      if (!pulling) {
+        const acc = -SPRING_K * bend;
+        vy += acc;
+        vy *= (1 - DAMPING);  // damping for strong recoil
+        bend += vy;
+        skew = bend * 0.35;
+      }
+      // inertia drift
+      floatY *= 0.92;
+      floatX *= 0.92;
+      updateTransform();
+
+      if (Math.abs(bend) > 0.05 || Math.abs(vy) > 0.05 || Math.abs(floatY) > 0.2 || Math.abs(floatX) > 0.2) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        bend = 0; skew = 0; updateTransform();
+        side.classList.remove('bending-up','bending-down','pull-top','pull-bottom');
+        raf = null;
+      }
+    };
+
+    const onScroll = () => {
+      const y = window.scrollY;
+      const dy = y - lastY;
+      lastY = y;
+
+      velocity = velocity * 0.7 + dy * 0.3;
+
+      if (Math.abs(dy) > 0.5) {
+        pulling = true;
+        dir = dy > 0 ? -1 : +1; // down => pull top; up => pull bottom
+        setDirClass(dir);
+        // bend opposite direction of scroll
+        bend = clamp(bend + dir * Math.abs(velocity) * K_PULL, -MAX_BEND, MAX_BEND);
+        skew = clamp(skew + dir * Math.abs(velocity) * 0.22, -MAX_SKEW, MAX_SKEW);
+        // free drift
+        floatY += -dir * DRIFT_SENS * Math.abs(velocity);
+        floatX += dir * DRIFT_SENS * Math.abs(velocity) * 0.25;
+        updateTransform();
+        if (!raf) raf = requestAnimationFrame(tick);
+      } else if (pulling) {
+        pulling = false;
+        if (!raf) raf = requestAnimationFrame(tick);
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // Make sure each nav-item still smooth-scrolls to its section
+    document.querySelectorAll('.side-nav .nav-item').forEach(btn => {
+      const targetId = btn.dataset.target || (btn.getAttribute('href')||'').replace('#','');
+      btn.addEventListener('click', (e) => {
+        const t = document.getElementById(targetId);
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
+  }
+
+  // --- SPEED TRAIN for top nav ---
+  if (topbar) {
+    let lastY = window.scrollY;
+    let v = 0; // velocity estimate
+
+    const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+
+    const onScrollTop = () => {
+      const y = window.scrollY;
+      const dy = y - lastY;
+      lastY = y;
+      v = v * 0.85 + dy * 0.15;
+      const spd = clamp(v / 40, -1, 1);
+      const bendDegX = spd * 4;
+      const blurPx   = Math.abs(spd) * 2.2;
+      const trail    = Math.min(Math.abs(spd) * 0.6, 0.6);
+      topbar.style.setProperty('--spd', spd.toFixed(3));
+      topbar.style.setProperty('--bendX', bendDegX.toFixed(2) + 'deg');
+      topbar.style.setProperty('--blur', blurPx.toFixed(2) + 'px');
+      topbar.style.setProperty('--trail', trail.toFixed(3));
+    };
+
+    window.addEventListener('scroll', onScrollTop, { passive: true });
+    onScrollTop();
+  }
+})();
+
+</script>
+
+<script>
+/* === Injected v10: Scroll-speed-driven stretch for nav bars === */
+(function() {
+  const side = document.querySelector('.side-nav');
+  const topbar = document.getElementById('main-nav');
+
+  let lastY = window.scrollY;
+  let velocity = 0;
+  let spd = 0;
+  let raf;
+  let idleTimer;
+
+  const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+  const lerp = (a,b,t)=>a+(b-a)*t;
+
+  const updateSide = (sX,sY,tilt,drift) => {
+    if (!side) return;
+    side.style.setProperty('--stretchX', sX.toFixed(3));
+    side.style.setProperty('--stretchY', sY.toFixed(3));
+    side.style.setProperty('--tiltY', tilt.toFixed(2)+'deg');
+    side.style.setProperty('--floatY', drift.toFixed(2)+'px');
+  };
+
+  const updateTop = (sX) => {
+    if (!topbar) return;
+    topbar.style.setProperty('--stretchX', sX.toFixed(3));
+  };
+
+  const tick = () => {
+    const y = window.scrollY;
+    const dy = y - lastY;
+    lastY = y;
+
+    velocity = velocity * 0.8 + dy * 0.2;
+    spd = clamp(Math.abs(velocity) / 30, 0, 1);
+
+    // SIDE NAV STRETCH: widen & tilt based on speed and direction
+    const dir = Math.sign(velocity);
+    const stretchX = lerp(1, 1.25, spd);  // sideways widening
+    const stretchY = lerp(1, 0.93, spd);  // vertical compression
+    const tilt = dir * spd * 6;           // small Y-tilt for depth
+    const drift = -dir * spd * 8;         // slight float
+    updateSide(stretchX, stretchY, tilt, drift);
+
+    // Toggle visual state
+    if (spd > 0.15) {
+      side.classList.add('fast');
+      topbar.classList.add('fast');
+    } else {
+      side.classList.remove('fast');
+      topbar.classList.remove('fast');
+    }
+
+    // TOP NAV STRETCH: widen horizontally
+    const stretchTop = lerp(1, 1.15, spd);
+    updateTop(stretchTop);
+
+    // Smooth reset when idle
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      updateSide(1,1,0,0);
+      updateTop(1);
+      side.classList.add('idle');
+      topbar.classList.remove('fast');
+      setTimeout(()=>side.classList.remove('idle'),400);
+    }, 250);
+
+    raf = requestAnimationFrame(tick);
+  };
+
+  raf = requestAnimationFrame(tick);
+})();
+
+</script>
+
+<script>
+/* === Injected v11: Scroll-speed → sideways stretch mapper (both navs) === */
+(function() {
+  const side = document.querySelector('.side-nav');
+  const topbar = document.getElementById('main-nav');
+  if (!side && !topbar) return;
+
+  let lastY = window.scrollY;
+  let vel = 0;              // smoothed scroll velocity
+  let idleTimer;
+
+  const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+  const lerp = (a,b,t)=>a+(b-a)*t;
+
+  function applyStretch(speedAbs, dir) {
+    // SIDE: stretchX up to 1.28, small squash on Y to 0.94, subtle lift with speed
+    if (side) {
+      const sX = lerp(1, 1.28, speedAbs);
+      const sY = lerp(1, 0.94, speedAbs);
+      const offY = -dir * speedAbs * 6; // tiny drift gives air-resistance vibe
+      side.style.setProperty('--stretchX', sX.toFixed(3));
+      side.style.setProperty('--stretchY', sY.toFixed(3));
+      side.style.setProperty('--offsetY', offY.toFixed(2)+'px');
+    }
+    // TOP: stretchX up to 1.18 (crisper look)
+    if (topbar) {
+      const sTop = lerp(1, 1.18, speedAbs);
+      topbar.style.setProperty('--stretchX', sTop.toFixed(3));
+    }
+  }
+
+  function resetStretch() {
+    if (side) {
+      side.style.setProperty('--stretchX', '1');
+      side.style.setProperty('--stretchY', '1');
+      side.style.setProperty('--offsetY', '0px');
+    }
+    if (topbar) {
+      topbar.style.setProperty('--stretchX', '1');
+    }
+  }
+
+  function onScroll() {
+    const y = window.scrollY;
+    const dy = y - lastY;
+    lastY = y;
+
+    // Smooth the velocity to avoid jagged motion
+    vel = vel * 0.82 + dy * 0.18;
+    const speedAbs = clamp(Math.abs(vel) / 28, 0, 1);
+    const dir = Math.sign(vel) || 0;
+
+    applyStretch(speedAbs, dir);
+
+    // Reset after short idle
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(resetStretch, 180);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  // Initialize
+  resetStretch();
+})();
+
+</script>
+
+<script>
+/* === Injected v12: Scroll velocity -> face-pull stretch + tails === */
+(function() {
+  const side = document.querySelector('.side-nav');
+  const topbar = document.getElementById('main-nav');
+  if (!side && !topbar) return;
+
+  let lastY = window.scrollY;
+  let vel = 0;               // smoothed scroll velocity
+  let idleTimer;
+
+  const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+  const lerp = (a,b,t)=>a+(b-a)*t;
+
+  function applyDeform(speedAbs, dir) {
+    // TOP NAV: center-anchored face-pull
+    if (topbar) {
+      const sX   = lerp(1, 1.26, speedAbs);  // strong widen
+      const skew = dir * lerp(0, 5, speedAbs); // tiny cinematic skew by direction
+      const tail = speedAbs;                 // 0..1
+      topbar.style.setProperty('--stretchX', sX.toFixed(3));
+      topbar.style.setProperty('--skew', skew.toFixed(2)+'deg');
+      topbar.style.setProperty('--tail', tail.toFixed(3));
+      if (speedAbs > 0.12) topbar.classList.add('fast'); else topbar.classList.remove('fast');
+    }
+
+    // SIDE NAV: sideways face-pull (left/right) with slight vertical comp
+    if (side) {
+      const sX   = lerp(1, 1.30, speedAbs);
+      const sY   = lerp(1, 0.95, speedAbs);
+      const skewY= dir * lerp(0, 4, speedAbs); // subtle tilt by direction
+      const offY = -dir * speedAbs * 6;
+      const tail = speedAbs;
+      side.style.setProperty('--stretchX', sX.toFixed(3));
+      side.style.setProperty('--stretchY', sY.toFixed(3));
+      side.style.setProperty('--skewY', skewY.toFixed(2)+'deg');
+      side.style.setProperty('--offsetY', offY.toFixed(2)+'px');
+      side.style.setProperty('--tail', tail.toFixed(3));
+      if (speedAbs > 0.12) side.classList.add('fast'); else side.classList.remove('fast');
+    }
+  }
+
+  function resetDeform() {
+    if (topbar) {
+      topbar.style.setProperty('--stretchX', '1');
+      topbar.style.setProperty('--skew', '0deg');
+      topbar.style.setProperty('--tail', '0');
+      topbar.classList.remove('fast');
+    }
+    if (side) {
+      side.style.setProperty('--stretchX', '1');
+      side.style.setProperty('--stretchY', '1');
+      side.style.setProperty('--skewY', '0deg');
+      side.style.setProperty('--offsetY', '0px');
+      side.style.setProperty('--tail', '0');
+      side.classList.remove('fast');
+    }
+  }
+
+  function onScroll() {
+    const y = window.scrollY;
+    const dy = y - lastY;
+    lastY = y;
+
+    // Smooth velocity to prevent jagged edges
+    vel = vel * 0.82 + dy * 0.18;
+
+    const speedAbs = clamp(Math.abs(vel) / 26, 0, 1);
+    const dir = Math.sign(vel) || 0;
+
+    applyDeform(speedAbs, dir);
+
+    // Reset shortly after scrolling stops
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(resetDeform, 180);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  resetDeform();
+})();
+
+</script>
+
+<script>
+/* === Injected v13: Scroll-speed → text stretch mapper === */
+(function(){
+  let lastY = window.scrollY;
+  let vel = 0;
+  let idle;
+
+  const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+  const lerp = (a,b,t)=>a+(b-a)*t;
+
+  function apply(speedAbs){
+    // Horizontal face-pull + slight vertical squash at speed
+    const sx = lerp(1, 1.08, speedAbs);
+    const sy = lerp(1, 0.98, speedAbs);
+    const ls = lerp(0, 0.6, speedAbs); // letter-spacing in px
+    const glow = lerp(0, 1, speedAbs);
+
+    const root = document.documentElement;
+    root.style.setProperty('--txX', sx.toFixed(3));
+    root.style.setProperty('--txY', sy.toFixed(3));
+    root.style.setProperty('--txLS', ls.toFixed(2) + 'px');
+    root.style.setProperty('--txGlow', glow.toFixed(3));
+  }
+
+  function reset(){
+    const root = document.documentElement;
+    root.style.setProperty('--txX', '1');
+    root.style.setProperty('--txY', '1');
+    root.style.setProperty('--txLS', '0px');
+    root.style.setProperty('--txGlow', '0');
+  }
+
+  function onScroll(){
+    const y = window.scrollY;
+    const dy = y - lastY;
+    lastY = y;
+    vel = vel * 0.82 + dy * 0.18;
+    const speedAbs = clamp(Math.abs(vel)/28, 0, 1);
+    apply(speedAbs);
+
+    clearTimeout(idle);
+    idle = setTimeout(reset, 200);
+  }
+
+  window.addEventListener('scroll', onScroll, {passive:true});
+  reset();
+})();
+
+</script>
+
+<script>
+/* === Injected v14: neutralize text stretch behavior === */
+(function(){
+  // Force variables to neutral; if a previous script tries to change them, keep resetting for a brief window.
+  const root = document.documentElement;
+  const neutral = () => {
+    root.style.setProperty('--txX', '1');
+    root.style.setProperty('--txY', '1');
+    root.style.setProperty('--txLS', '0px');
+    root.style.setProperty('--txGlow', '0');
+  };
+  neutral();
+  let t = 0, id = setInterval(() => { neutral(); if (++t > 40) clearInterval(id); }, 50);
+})();
+
+</script>
+
+<script>
+/* === Injected v15 logic === */
+(function(){
+  /* ---------------- Skills tooltip ---------------- */
+  const skillsRoot = document.getElementById('skills');
+  if (skillsRoot) {
+    // hide any "static box" if present (callout/panel-like big boxes)
+    Array.from(skillsRoot.children).forEach(el => {
+      const rect = el.getBoundingClientRect();
+      const txt = (el.textContent || '').toLowerCase();
+      const hint = /(summary|overview|box|panel|callout)/.test(el.className||'') || /(summary|overview)/.test(txt);
+      if (hint && rect.width > 260 && rect.height > 120) {
+        el.style.display = 'none';
+      }
+    });
+
+    let fly = document.getElementById('skill-fly');
+    if (!fly) {
+      fly = document.createElement('div');
+      fly.id = 'skill-fly';
+      document.body.appendChild(fly);
+    }
+
+    const skillSelector = [
+      '#skills li',
+      '#skills .chip', '#skills .tag', '#skills .badge',
+      '#skills .skill', '#skills .skill-item', '#skills .skill-chip', '#skills .skill-tag',
+      '#skills [data-skill]', '#skills [data-desc]'
+    ].join(',');
+
+    let current = null;
+    const show = (el, e) => {
+      current = el;
+      const name = el.getAttribute('data-skill') || el.getAttribute('data-name') || el.textContent.trim();
+      const desc = el.getAttribute('data-desc') || el.getAttribute('title') || '';
+      fly.innerHTML = `<strong>${name}</strong><br><span style="opacity:.9">${desc || '—'}</span>`;
+      position(e);
+      fly.classList.add('show');
+      el.classList.add('is-skill-hovered');
+    };
+    const hide = () => {
+      fly.classList.remove('show');
+      if (current) current.classList.remove('is-skill-hovered');
+      current = null;
+    };
+    const position = (e) => {
+      fly.style.left = e.clientX + 'px';
+      fly.style.top = e.clientY + 'px';
+    };
+
+    skillsRoot.addEventListener('mousemove', (e) => {
+      const el = e.target.closest(skillSelector);
+      if (el !== current) {
+        hide();
+        if (el) show(el, e);
+        return;
+      }
+      if (current) position(e);
+    });
+    skillsRoot.addEventListener('mouseleave', hide);
+  }
+
+  /* ---------------- HERO reactive particle overlay ---------------- */
+  const hero = document.getElementById('hero');
+  if (hero) {
+    let canvas = document.getElementById('hero-reactive-canvas');
+    if (!canvas) {
+      canvas = document.createElement('canvas');
+      canvas.id = 'hero-reactive-canvas';
+      hero.appendChild(canvas);
+    }
+    const ctx = canvas.getContext('2d');
+    let w, h, dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    const resize = () => {
+      const rect = hero.getBoundingClientRect();
+      w = Math.floor(rect.width);
+      h = Math.floor(rect.height);
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    };
+    resize(); window.addEventListener('resize', resize);
+
+    // particles
+    const N = 60;
+    const pts = Array.from({length:N}, () => ({
+      x: Math.random()*w, y: Math.random()*h,
+      vx: (Math.random()-.5)*0.6, vy: (Math.random()-.5)*0.6,
+      r: 1.2 + Math.random()*2.2
+    }));
+    let mouse = {x: w/2, y: h/2, active: false};
+
+    hero.addEventListener('mousemove', (e) => {
+      const rect = hero.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.active = true;
+    });
+    hero.addEventListener('mouseleave', () => mouse.active = false);
+
+    const step = () => {
+      ctx.clearRect(0,0,w,h);
+      for (const p of pts) {
+        // attraction/repulsion towards mouse
+        const dx = mouse.x - p.x;
+        const dy = mouse.y - p.y;
+        const dist = Math.hypot(dx,dy) + 0.001;
+        const force = mouse.active ? Math.min(2.2/(dist*0.02), 1.5) : 0.02; // more reactive near cursor
+        p.vx += dx/dist * force * 0.15 + (Math.random()-.5)*0.05;
+        p.vy += dy/dist * force * 0.15 + (Math.random()-.5)*0.05;
+        // damping and bounds
+        p.vx *= 0.96; p.vy *= 0.96;
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < -10) p.x = w+10; if (p.x > w+10) p.x = -10;
+        if (p.y < -10) p.y = h+10; if (p.y > h+10) p.y = -10;
+        // draw
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(127,208,218,.85)';
+        ctx.fill();
+      }
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  /* ---------------- Top nav: dashboard curve on scroll ---------------- */
+  const topbar = document.getElementById('main-nav');
+  if (topbar) {
+    let lastY = window.scrollY, v = 0;
+    const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+    const onScroll = () => {
+      const y = window.scrollY;
+      const dy = y - lastY; lastY = y;
+      v = v*0.85 + dy*0.15;
+      const spd = clamp(Math.abs(v)/40, 0, 1);
+      const curveScale = 1 + spd*0.2;
+      const alpha = 0.35 + spd*0.45;
+      topbar.classList.add('dashboard');
+      topbar.style.setProperty('--curveScale', curveScale.toFixed(2));
+      topbar.style.setProperty('--curveAlpha', alpha.toFixed(2));
+    };
+    window.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+  }
+})();
+</script>
+
+
+<script>
+/* === Injected v20: Zero-wobble, fast-spinning golden black hole (with attraction) === */
+(function(){
+  // Deactivate any previous BH canvas
+  const old = document.getElementById('cursor-blackhole');
+  if (old) old.id = 'cursor-blackhole-old';
+
+  // New stable canvas
+  const canvas = document.createElement('canvas');
+  canvas.id = 'cursor-blackhole';
+  Object.assign(canvas.style, {
+    position: 'fixed', inset: '0', width: '100vw', height: '100vh',
+    pointerEvents: 'none', zIndex: 100000
+  });
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d', { alpha: true });
+  let dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  function resize(){
+    const w = Math.floor(window.innerWidth);
+    const h = Math.floor(window.innerHeight);
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    canvas.style.width = w+'px';
+    canvas.style.height = h+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener('resize', resize, {passive:true}); resize();
+
+  // Direct tracking state (no inertia)
+  const state = {
+    x: window.innerWidth/2, y: window.innerHeight/2,
+    tx: window.innerWidth/2, ty: window.innerHeight/2,
+    size: 14,   // core radius
+    halo: 52,   // halo radius
+    angle: 0    // rotation angle
+  };
+
+  // Track mouse directly
+  window.addEventListener('mousemove', (e)=>{
+    state.tx = e.clientX;
+    state.ty = e.clientY;
+  }, {passive:true});
+
+  // Keep the attraction effect (gentle)
+  const ATTR_RADIUS = 170;
+  const attractSelector = '.attractable, .chip, .tag, .badge, a, button';
+  let lastAttract = 0;
+  function applyAttraction(ax, ay){
+    const now = performance.now();
+    if (now - lastAttract < 40) return;
+    lastAttract = now;
+    const els = document.querySelectorAll(attractSelector);
+    for (const el of els) {
+      const r = el.getBoundingClientRect();
+      const cx = r.left + r.width/2;
+      const cy = r.top + r.height/2;
+      const dx = ax - cx;
+      const dy = ay - cy;
+      const dist = Math.hypot(dx,dy);
+      if (dist < ATTR_RADIUS && dist > 6) {
+        const mag = Math.min(1, (ATTR_RADIUS - dist)/ATTR_RADIUS) * 0.35;
+        const tx = (dx/dist) * mag * 8;
+        const ty = (dy/dist) * mag * 8;
+        el.style.transform = `translate(${tx}px, ${ty}px)`;
+      } else {
+        el.style.transform = '';
+      }
+    }
+  }
+
+  let last = performance.now();
+  function loop(ts){
+    const dt = Math.min(32, ts - last); last = ts;
+    const dtSec = dt / 1000;
+
+    // No wobble: snap render position directly to target
+    state.x = state.tx;
+    state.y = state.ty;
+
+    // Constant fast spin
+    const OMEGA = Math.PI * 2.4; // rad/s
+    state.angle = (state.angle + OMEGA * dtSec) % (Math.PI*2);
+
+    // Clear
+    ctx.clearRect(0,0,canvas.width/dpr,canvas.height/dpr);
+
+    // Draw accretion disk base (subtle, fixed size — no expansion with speed)
+    ctx.save();
+    ctx.translate(state.x, state.y);
+
+    const ringR = state.halo;
+    const grdDisk = ctx.createRadialGradient(0,0, ringR*0.45, 0,0, ringR*1.0);
+    grdDisk.addColorStop(0.0, 'rgba(30, 30, 32, 0.18)');
+    grdDisk.addColorStop(0.55, 'rgba(120, 200, 210, 0.20)');
+    grdDisk.addColorStop(1.0, 'rgba(120, 200, 210, 0)');
+    ctx.fillStyle = grdDisk;
+    ctx.beginPath(); ctx.arc(0,0, ringR, 0, Math.PI*2); ctx.fill();
+
+    // Spinning golden horizon ring
+    const horizonR = state.size * 1.22;
+    ctx.rotate(state.angle);
+
+    // Base golden ring
+    ctx.lineWidth = 2.2;
+    ctx.shadowColor = 'rgba(255, 200, 60, 0.6)';
+    ctx.shadowBlur = 10;
+    ctx.strokeStyle = 'rgba(255, 215, 0, 0.92)';
+    ctx.beginPath(); ctx.arc(0,0, horizonR, 0, Math.PI*2); ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Moving bright sector
+    const segAng = Math.PI / 5; // 36°
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(255, 240, 120, 0.95)';
+    ctx.beginPath();
+    ctx.arc(0,0, horizonR*1.02, 0, segAng);
+    ctx.stroke();
+
+    // Thin trailing arc
+    ctx.lineWidth = 1.6;
+    ctx.strokeStyle = 'rgba(255, 220, 90, 0.85)';
+    ctx.beginPath();
+    ctx.arc(0,0, horizonR*1.05, -segAng*0.6, -segAng*0.15);
+    ctx.stroke();
+
+    ctx.restore();
+
+    // Dark, stable core
+    ctx.save();
+    const coreR = state.size;
+    const grdCore = ctx.createRadialGradient(state.x, state.y, 0, state.x, state.y, coreR*1.05);
+    grdCore.addColorStop(0, 'rgba(0,0,0,1)');
+    grdCore.addColorStop(0.65, 'rgba(0,0,0,0.92)');
+    grdCore.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grdCore;
+    ctx.beginPath(); ctx.arc(state.x, state.y, coreR, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    // Gentle attraction
+    applyAttraction(state.x, state.y);
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+
+</script>
+</body>
+</html>
+
+
